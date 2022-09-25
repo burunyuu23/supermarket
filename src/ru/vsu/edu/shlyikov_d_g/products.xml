@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<supermarket>
+    <name>Test</name>
+    <list>
+        <products>
+            <product vendor_code="FRU-APP-CHA" name="Яблоко 'Чемпион'"
+                     exp_days="6" measure="кг" unit_price="139.99"/>
+            <product vendor_code="FRU-APP-CHA" name="Яблоко 'Сезонные'"
+                     exp_days="6" measure="кг" unit_price="89.99"/>
+            <product vendor_code="FRU-APP-CHA" name="Яблоко 'Гольден'"
+                     exp_days="6" measure="кг" unit_price="139.99"/>
+            <product vendor_code="FRU-APP-CHA" name="Яблоко 'Гренни Смит'"
+                     exp_days="6" measure="кг" unit_price="129.99"/>
+
+            <product vendor_code="FRU-BAN-WEI" name="Бананы 'Весовые'"
+                     exp_days="6" measure="кг" unit_price="139.99"/>
+            <product vendor_code="FRU-BAN-GRE" name="Бананы 'Зелёные'"
+                     exp_days="6" measure="кг" unit_price="139.99"/>
+            <product vendor_code="FRU-BAN-RED" name="Бананы 'Красные'"
+                     exp_days="6" measure="кг" unit_price="139.99"/>
+            <product vendor_code="FRU-BAN-MIN" name="Бананы 'Мини'"
+                     exp_days="6" measure="кг" unit_price="139.99"/>
+        </products>
+    </list>
+    <rooms>
+        <storage>
+            <products>
+                <product />
+            </products>
+        </storage>
+        <store>
+            <products>
+                <product />
+            </products>
+        </store>
+    </rooms>
+</supermarket>
