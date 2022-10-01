@@ -1,9 +1,6 @@
 package ru.vsu.edu.shlyikov_d_g.products;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Products {
     private Map<String, Consignment> product_range = new HashMap<>();
@@ -62,16 +59,16 @@ public class Products {
                 2,false,true);
         product_range.put(a.getVendor_code(), a);
         a = new Consignment("MIL-MIL-ECO",
-                "Молоко 'ЭкоНива' 1л 3.2%", "кг",68.99,
+                "Молоко 'ЭкоНива' 1л 3.2%", "шт",68.99,
                 2,false,true);
         product_range.put(a.getVendor_code(), a);
 
         a = new Consignment("MIL-CHE-GAU",
-                "Сыр 'Гауда'", "шт",479.99,
+                "Сыр 'Гауда'", "кг",479.99,
                 4,false,true);
         product_range.put(a.getVendor_code(), a);
         a = new Consignment("MIL-CHE-MOZ",
-                "Сыр 'Моцарелла'", "шт",674.99,
+                "Сыр 'Моцарелла'", "кг",674.99,
                 4,false,true);
         product_range.put(a.getVendor_code(), a);
         a = new Consignment("MIL-CHE-MAA",
@@ -92,11 +89,23 @@ public class Products {
         return product_range.get(vendor_code);
     }
 
-    public Set<Consignment> getRandomProducts(int percentage){
-        Set<Consignment> s = new HashSet<>();
+    public List<Consignment> getRandomProducts(int percentage){
+        List<Consignment> s = new ArrayList<>();
         for (String key:product_range.keySet()) {
             if(Math.random() * 100 < percentage){
                 s.add(product_range.get(key));
+            }
+        }
+        return s;
+    }
+
+    public List<Consignment> getRandomProducts(int percentage, int a){
+        List<Consignment> s = new ArrayList<>();
+        while(s.size() < a) {
+            for (String key : product_range.keySet()) {
+                if (Math.random() * 100 < percentage && !s.contains(product_range.get(key)) && s.size() < a) {
+                    s.add(product_range.get(key));
+                }
             }
         }
         return s;

@@ -41,6 +41,19 @@ public class Consignment {
         this.should_be_in_the_fridge = should_be_in_the_fridge;
     }
 
+    // obj clone
+    public Consignment(Consignment c){
+        this.vendor_code = c.getVendor_code();
+        this.product_name = c.getProduct_name();
+        this.amount = c.getAmount();
+        this.measure = c.getMeasure();
+        this.unit_price = c.getUnit_price();
+        this.date_of_manufacture = c.getDate_of_manufacture();
+        this.expiration_days = c.getExpiration_days();
+        this.age_restricted = c.getAge_restricted();
+        this.should_be_in_the_fridge = c.getShould_be_in_the_fridge();;
+    }
+
     public Consignment(String vendor_code, String product_name, double amount, String measure,
                        double unit_price, LocalDateTime date_of_manufacture,
                        int expiration_days,boolean age_restricted,
@@ -68,6 +81,8 @@ public class Consignment {
         this.age_restricted = age_restricted;
         this.should_be_in_the_fridge = should_be_in_the_fridge;
     }
+
+
 
     public String getVendor_code() {
         return vendor_code;
@@ -113,11 +128,31 @@ public class Consignment {
         this.amount = amount;
     }
 
-    public boolean isAge_restricted() {
+    public void plusAmount(double amount) {
+        this.amount += amount;
+    }
+
+    public double minusAmount(double amount) {
+        double a = getMinusAmount(amount);
+        this.amount -= a;
+        Consignment.round(this.amount, 2);
+        return a;
+    }
+
+    private double getMinusAmount(double amount) {
+        if (this.amount - amount <= 0){
+            return this.amount;
+        }
+        else{
+            return amount;
+        }
+    }
+
+    public boolean getAge_restricted() {
         return age_restricted;
     }
 
-    public boolean isShould_be_in_the_fridge() {
+    public boolean getShould_be_in_the_fridge() {
         return should_be_in_the_fridge;
     }
 
@@ -129,12 +164,12 @@ public class Consignment {
         return false;
     }
 
-    // price based on extra charge
+    // Цена, с наценкой
     public void setCurr_price(int percent){
         this.curr_price = Math.ceil(this.unit_price * 1 + percent/100.0) - 0.01;
     }
 
-    // price entered by player
+    // Цена, введённая игроком
     public void setCurr_priceManual(int price){
         this.curr_price = price;
     }
@@ -144,20 +179,63 @@ public class Consignment {
         this.curr_price = Math.ceil(this.curr_price * 1 - this.discount/100.0) - 0.01;
     }
 
+    private String rightDays(){
+        if (expiration_days % 10 == 1 && expiration_days % 100 != 11){
+            return "день";
+        }
+        else if (expiration_days % 10 == 2 || expiration_days % 10 == 3
+                || expiration_days % 10 == 4 && expiration_days % 100 != 12
+                && expiration_days % 100 != 13 && expiration_days % 100 != 14){
+            return "дня";
+        }
+        else{
+            return "дней";
+        }
+
+    }
+
+    private boolean checkKG(){
+        return this.measure.equals("кг");
+    }
+
+    private boolean checkSH(){
+        return this.measure.equals("шт");
+    }
+
+    private double amountRandom(){
+        double d = Math.random() * 1000 + 399;
+        if (this.checkSH()){
+            return round(d, 0);
+        }
+        return round(d, 2);
+    }
+
+    public void setAmountRandom(){
+        setAmount(amountRandom());
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
+
     public String toStringSupplier(){
         return product_name + "; " +
                 "\nколичество: " + amount + ";" +
-                "\nпо цене за " + measure + " : " + unit_price + ";" +
-                "\nсрок годности: " + expiration_days + " дней" +
+                "\nпо цене за " + measure + ": " + unit_price + ";" +
+                    "\nсрок годности: " + expiration_days + " " + rightDays() +
                 (age_restricted ? ";\nне продаётся лицам младше 18 лет" : "") +
-                (should_be_in_the_fridge ? ";\nдолжен храниться в холодильнике" : "") + ".";
+                (should_be_in_the_fridge ? ";\nдолжен храниться в холодильнике" : "") + ".\n";
     }
 
     public String toStringStore(){
         return product_name + "; " +
                 "\nколичество: " + amount + ";" +
-                "\nпо цене за " + measure + " : " + unit_price + ";" +
-                "\nсрок годности: " + expiration_days + " дней" +
+                "\nпо цене за " + measure + ": " + unit_price + ";" +
+                "\nсрок годности: " + expiration_days + " " + rightDays() +
                 (age_restricted ? ";\nне продаётся лицам младше 18 лет" : "") +
                 (should_be_in_the_fridge ? ";\nдолжен храниться в холодильнике" : "") + ".";
     }
@@ -165,8 +243,8 @@ public class Consignment {
     public String toStringCustomer(){
         return product_name + "; " +
                 "\nколичество: " + amount + ";" +
-                "\nпо цене за " + measure + " : " + unit_price + ";" +
-                "\nсрок годности: " + expiration_days + " дней" +
+                "\nпо цене за " + measure + ": " + unit_price + ";" +
+                "\nсрок годности: " + expiration_days + " " + rightDays() +
                 (age_restricted ? ";\nне продаётся лицам младше 18 лет" : "") +
                 (should_be_in_the_fridge ? ";\nдолжен храниться в холодильнике" : "") + ".";
     }

@@ -1,6 +1,6 @@
 package ru.vsu.edu.shlyikov_d_g.main;
 
-import ru.vsu.edu.shlyikov_d_g.humans.enums.Genders;
+import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 
 public class Main {
 

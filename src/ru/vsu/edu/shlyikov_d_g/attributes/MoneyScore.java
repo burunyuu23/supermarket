@@ -1,4 +1,4 @@
-package ru.vsu.edu.shlyikov_d_g;
+package ru.vsu.edu.shlyikov_d_g.attributes;
 
 public class MoneyScore {
     private double money;
@@ -7,8 +7,8 @@ public class MoneyScore {
         this.money = money;
     }
 
-    public static MoneyScore random(){
-        return new MoneyScore((int) (Math.random() * 4900 + 100));
+    public MoneyScore(){
+        this.money = (int) (Math.random() * 4900 + 100);
     }
 
     public double getMoney(){
