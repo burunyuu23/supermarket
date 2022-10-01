@@ -1,32 +1,14 @@
-package ru.vsu.edu.shlyikov_d_g.shop_baskets;
+package ru.vsu.edu.shlyikov_d_g;
 
-import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
-import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
-import ru.vsu.edu.shlyikov_d_g.products.Consignment;
 import ru.vsu.edu.shlyikov_d_g.products.PurchaseUnit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ShopBasket {
-    protected final List<Consignment> lst = new ArrayList<>();
-    protected double cost;
-
-    // главная функция обработки корзины
-    public void process(List<Supplier> supplierList, MoneyScore ms) {}
-
-    // функция добавление в корзину
-    protected void add(String str, List<Supplier> supplierList){}
-
-    // функция удаления из корзины
-    protected void remove(Scanner scanner){}
-
-    public List<Consignment> getBasket(){
-        return lst;
-    }
-
-    protected List<String> regexStr(String str, String pattern) {
+public class Utils {
+    public static List<String> regexStr(String str, String pattern) {
         List<String> allMatches = new ArrayList<>();
         Matcher m = Pattern.compile(pattern)
                 .matcher(str);
@@ -36,7 +18,7 @@ public class ShopBasket {
         return allMatches;
     }
 
-    protected List<Integer> regexInt(String str, String pattern) {
+    public static List<Integer> regexInt(String str, String pattern) {
         List<Integer> allMatches = new ArrayList<>();
         Matcher m = Pattern.compile(pattern)
                 .matcher(str);
@@ -46,7 +28,7 @@ public class ShopBasket {
         return allMatches;
     }
 
-    protected PurchaseUnit regexPurchaseUnit(String str, String pattern){
+    public static PurchaseUnit regexPurchaseUnit(String str, String pattern){
         PurchaseUnit pu;
         List<String> allMatches = new ArrayList<>();
         Matcher m = Pattern.compile(pattern)
@@ -57,5 +39,13 @@ public class ShopBasket {
         pu = new PurchaseUnit(Integer.parseInt(allMatches.get(0)),
                 Integer.parseInt(allMatches.get(1)), Double.parseDouble(allMatches.get(2)));
         return pu;
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 }

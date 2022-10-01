@@ -1,6 +1,5 @@
 package ru.vsu.edu.shlyikov_d_g.humans.buyers;
 
-import ru.vsu.edu.shlyikov_d_g.main.Game;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
 import ru.vsu.edu.shlyikov_d_g.products.Products;
 

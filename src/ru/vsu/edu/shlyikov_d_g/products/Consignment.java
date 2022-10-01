@@ -1,5 +1,7 @@
 package ru.vsu.edu.shlyikov_d_g.products;
 
+import ru.vsu.edu.shlyikov_d_g.Utils;
+
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -135,7 +137,7 @@ public class Consignment {
     public double minusAmount(double amount) {
         double a = getMinusAmount(amount);
         this.amount -= a;
-        Consignment.round(this.amount, 2);
+        Utils.round(this.amount, 2);
         return a;
     }
 
@@ -205,21 +207,13 @@ public class Consignment {
     private double amountRandom(){
         double d = Math.random() * 1000 + 399;
         if (this.checkSH()){
-            return round(d, 0);
+            return Utils.round(d, 0);
         }
-        return round(d, 2);
+        return Utils.round(d, 2);
     }
 
     public void setAmountRandom(){
         setAmount(amountRandom());
-    }
-
-    public static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-        long factor = (long) Math.pow(10, places);
-        value = value * factor;
-        long tmp = Math.round(value);
-        return (double) tmp / factor;
     }
 
     public String toStringSupplier(){

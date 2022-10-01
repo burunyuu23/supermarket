@@ -2,11 +2,9 @@ package ru.vsu.edu.shlyikov_d_g.humans.buyers;
 
 import ru.vsu.edu.shlyikov_d_g.main.Game;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
-import ru.vsu.edu.shlyikov_d_g.shop_baskets.CustomerShopBasket;
 
 public class Customer extends Buyer {
     private MoneyScore money;
-    private CustomerShopBasket customerShopBasket = new CustomerShopBasket();
 
     public MoneyScore getMoney() {
         return money;
