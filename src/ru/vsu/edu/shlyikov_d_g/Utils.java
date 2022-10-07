@@ -2,6 +2,10 @@ package ru.vsu.edu.shlyikov_d_g;
 
 import ru.vsu.edu.shlyikov_d_g.products.PurchaseUnit;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -31,21 +35,41 @@ public class Utils {
     public static PurchaseUnit regexPurchaseUnit(String str, String pattern){
         PurchaseUnit pu;
         List<String> allMatches = new ArrayList<>();
+        List<Integer> allIntegers = new ArrayList<>();
+        BigDecimal a = new BigDecimal(0);
         Matcher m = Pattern.compile(pattern)
                 .matcher(str);
         while (m.find()) {
             allMatches.add(m.group());
         }
-        pu = new PurchaseUnit(Integer.parseInt(allMatches.get(0)),
-                Integer.parseInt(allMatches.get(1)), Double.parseDouble(allMatches.get(2)));
+        for (int i = 0; i < allMatches.size(); i++) {
+            if (i != allMatches.size() - 1){
+                allIntegers.add(Integer.parseInt(allMatches.get(i)));
+            }
+            else if (i == allMatches.size() - 1){
+                a = new BigDecimal(Double.parseDouble(allMatches.get(i)));
+            }
+        }
+        pu = new PurchaseUnit(allIntegers, a);
         return pu;
     }
 
     public static double round(double value, int places) {
-        if (places < 0) throw new IllegalArgumentException();
-        long factor = (long) Math.pow(10, places);
-        value = value * factor;
-        long tmp = Math.round(value);
-        return (double) tmp / factor;
+
+        MathContext mathContext = new MathContext(15, RoundingMode.HALF_UP); // для double
+        BigDecimal bigDecimal = new BigDecimal(value, mathContext);
+        bigDecimal = bigDecimal.setScale(2, RoundingMode.DOWN);
+        value = bigDecimal.doubleValue();
+
+        return value;
+
+//        DecimalFormat decimalFormat = new DecimalFormat("#." + "#".repeat(places));
+//        return Double.parseDouble(decimalFormat.format(value));
+
+//        if (places < 0) throw new IllegalArgumentException();
+//        long factor = (long) Math.pow(10, places);
+//        value = value * factor;
+//        long tmp = Math.round(value);
+//        return (double) tmp / factor;
     }
 }

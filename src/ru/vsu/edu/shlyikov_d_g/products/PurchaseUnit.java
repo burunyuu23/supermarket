@@ -1,25 +1,34 @@
 package ru.vsu.edu.shlyikov_d_g.products;
 
-public class PurchaseUnit {
-    private int numOfSupplier;
-    private int numOfConsignment;
-    private double amount;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.ArrayList;
 
-    public PurchaseUnit(int numOfSupplier, int numOfConsignment, double amount) {
-        this.numOfSupplier = numOfSupplier;
-        this.numOfConsignment = numOfConsignment;
+public class PurchaseUnit {
+    private List<Integer> nums = new ArrayList<>();
+    private BigDecimal amount;
+
+    public PurchaseUnit(int numOfSupplier, int numOfConsignment, BigDecimal amount) {
+        this.nums.add(numOfSupplier);
+        this.nums.add(numOfConsignment);
         this.amount = amount;
     }
 
-    public int getNumOfSupplier() {
-        return numOfSupplier;
+    public PurchaseUnit(int numOfConsignment, BigDecimal amount) {
+        this.nums.add(numOfConsignment);
+        this.amount = amount;
     }
 
-    public int getNumOfConsignment() {
-        return numOfConsignment;
+    public PurchaseUnit(List<Integer> nums, BigDecimal amount) {
+        this.nums = nums;
+        this.amount = amount;
     }
 
-    public double getAmount() {
+    public List<Integer> getNums() {
+        return nums;
+    }
+
+    public BigDecimal getAmount() {
         return amount;
     }
 }

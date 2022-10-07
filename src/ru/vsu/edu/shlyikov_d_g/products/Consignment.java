@@ -3,6 +3,7 @@ package ru.vsu.edu.shlyikov_d_g.products;
 import ru.vsu.edu.shlyikov_d_g.Utils;
 
 import java.awt.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -13,10 +14,10 @@ public class Consignment {
 
     // this all must be received from vendor code
     private String product_name;
-    private double amount;
+    private BigDecimal amount;
     private String measure; // in kilograms/grams or pieces
-    private double unit_price;
-    private double curr_price;
+    private BigDecimal unit_price;
+    private BigDecimal curr_price;
     private int discount;
     private LocalDateTime date_of_manufacture;
     private int expiration_days;
@@ -29,8 +30,8 @@ public class Consignment {
     }
 
     // test object creation (w/o database) or nested creation from database
-    public Consignment(String product_name, double amount, String measure,
-                       double unit_price, LocalDateTime date_of_manufacture,
+    public Consignment(String product_name, BigDecimal amount, String measure,
+                       BigDecimal unit_price, LocalDateTime date_of_manufacture,
                        int expiration_days,boolean age_restricted,
                                boolean should_be_in_the_fridge){
         this.product_name = product_name;
@@ -56,8 +57,8 @@ public class Consignment {
         this.should_be_in_the_fridge = c.getShould_be_in_the_fridge();;
     }
 
-    public Consignment(String vendor_code, String product_name, double amount, String measure,
-                       double unit_price, LocalDateTime date_of_manufacture,
+    public Consignment(String vendor_code, String product_name, BigDecimal amount, String measure,
+                       BigDecimal unit_price, LocalDateTime date_of_manufacture,
                        int expiration_days,boolean age_restricted,
                        boolean should_be_in_the_fridge){
         this.vendor_code = vendor_code;
@@ -78,7 +79,7 @@ public class Consignment {
         this.vendor_code = vendor_code;
         this.product_name = product_name;
         this.measure = measure;
-        this.unit_price = unit_price;
+        this.unit_price = BigDecimal.valueOf(unit_price);
         this.expiration_days = expiration_days;
         this.age_restricted = age_restricted;
         this.should_be_in_the_fridge = should_be_in_the_fridge;
@@ -106,7 +107,7 @@ public class Consignment {
         return product_name;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
@@ -114,7 +115,7 @@ public class Consignment {
         return measure;
     }
 
-    public double getUnit_price() {
+    public BigDecimal getUnit_price() {
         return unit_price;
     }
 
@@ -126,26 +127,28 @@ public class Consignment {
         return expiration_days;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
-    public void plusAmount(double amount) {
-        this.amount += amount;
+    public void plusAmount(BigDecimal amount) {
+        this.amount = this.amount.add(amount);
     }
 
-    public double minusAmount(double amount) {
-        double a = getMinusAmount(amount);
-        this.amount -= a;
-        Utils.round(this.amount, 2);
+    public BigDecimal minusAmount(BigDecimal amount) {
+        BigDecimal a = getMinusAmount(amount);
+        this.amount = this.amount.add(a.multiply(BigDecimal.valueOf(-1)));
         return a;
     }
 
-    private double getMinusAmount(double amount) {
-        if (this.amount - amount <= 0){
+    private BigDecimal getMinusAmount(BigDecimal amount) {
+        if (this.amount.add(amount.multiply(new BigDecimal(-1))).compareTo(new BigDecimal(0)) < 0){
             return this.amount;
         }
-        else{
+        else if (amount.compareTo(new BigDecimal(0)) <= 0){
+            return new BigDecimal(0);
+        }
+        else {
             return amount;
         }
     }
@@ -168,17 +171,17 @@ public class Consignment {
 
     // Цена, с наценкой
     public void setCurr_price(int percent){
-        this.curr_price = Math.ceil(this.unit_price * 1 + percent/100.0) - 0.01;
+        this.curr_price = this.unit_price.multiply(new BigDecimal(1)).add(new BigDecimal(percent/100.0)).add(BigDecimal.valueOf(-0.01));
     }
 
     // Цена, введённая игроком
     public void setCurr_priceManual(int price){
-        this.curr_price = price;
+        this.curr_price = new BigDecimal(price);
     }
 
     public void setDiscount(int d){
         this.discount = d;
-        this.curr_price = Math.ceil(this.curr_price * 1 - this.discount/100.0) - 0.01;
+        this.curr_price = this.curr_price.multiply(new BigDecimal(1)).add(new BigDecimal(discount/100.0)).add(BigDecimal.valueOf(-0.01));
     }
 
     private String rightDays(){
@@ -204,12 +207,9 @@ public class Consignment {
         return this.measure.equals("шт");
     }
 
-    private double amountRandom(){
+    private BigDecimal amountRandom(){
         double d = Math.random() * 1000 + 399;
-        if (this.checkSH()){
-            return Utils.round(d, 0);
-        }
-        return Utils.round(d, 2);
+        return new BigDecimal(d);
     }
 
     public void setAmountRandom(){

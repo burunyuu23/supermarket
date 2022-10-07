@@ -1,5 +1,6 @@
 package ru.vsu.edu.shlyikov_d_g.products;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 public class Products {
@@ -89,25 +90,31 @@ public class Products {
         return product_range.get(vendor_code);
     }
 
-    public List<Consignment> getRandomProducts(int percentage){
+    public List<Consignment> getRandomProducts(BigDecimal percentage){
+        Random random = new Random();
         List<Consignment> s = new ArrayList<>();
         for (String key:product_range.keySet()) {
-            if(Math.random() * 100 < percentage){
+            if(percentage.compareTo(BigDecimal.valueOf(random.nextInt(100))) > 0){
                 s.add(product_range.get(key));
             }
         }
         return s;
     }
 
-    public List<Consignment> getRandomProducts(int percentage, int a){
+    public List<Consignment> getLimitedRandomProducts(int a){
         List<Consignment> s = new ArrayList<>();
-        while(s.size() < a) {
-            for (String key : product_range.keySet()) {
-                if (Math.random() * 100 < percentage && !s.contains(product_range.get(key)) && s.size() < a) {
-                    s.add(product_range.get(key));
+            for (int i = 0; i < a; i++) {
+                    Random       random    = new Random();
+                    List<String> keys      = new ArrayList<>(product_range.keySet());
+                    String       randomKey = keys.get(random.nextInt(keys.size()));
+                if (!s.contains(product_range.get(randomKey))) {
+                    Consignment value = product_range.get(randomKey);
+                    s.add(value);
                 }
-            }
-        }
+                else{
+                    i--;
+                }
+                }
         return s;
     }
 }

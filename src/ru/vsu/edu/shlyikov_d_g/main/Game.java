@@ -4,6 +4,7 @@ import ru.vsu.edu.shlyikov_d_g.DatePrinter;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.events.Supply;
 import ru.vsu.edu.shlyikov_d_g.products.Products;
+import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 
 public class Game {
     private MoneyScore money;
@@ -11,6 +12,7 @@ public class Game {
     private DatePrinter date;
     private int day_passed;
     private Supply supply = new Supply();
+    private Storage storage = new Storage(20);
 //    private Queue<Event> q;
 
     // 20-30% extra charge
@@ -28,7 +30,7 @@ public class Game {
     public void start(){
         day_passed = 0;
         Help.start();
-        supply.supply(money);
+        supply.supply(money, storage);
 //        while (true) {
 //
 //

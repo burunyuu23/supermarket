@@ -10,7 +10,7 @@ public class Supplier extends Buyer {
         setGender();
         setName();
         setYears((int) (Math.random() * 50 + 20));
-        this.basket = products.getRandomProducts(75, 3);
+        this.basket = products.getLimitedRandomProducts(3);
 
         for (Consignment c:this.basket) {
             c.setAmountRandom();
@@ -18,7 +18,7 @@ public class Supplier extends Buyer {
     }
 
     public void resetProducts(){
-        this.basket = products.getRandomProducts(75, 3);
+        this.basket = products.getLimitedRandomProducts(3);
 
         for (Consignment c:this.basket) {
             c.setAmountRandom();
@@ -28,7 +28,7 @@ public class Supplier extends Buyer {
     public void showProducts(){
         int i = 1;
         for (Consignment c : basket) {
-            if (c.getAmount() != 0) {
+            if (!c.getAmount().equals(0)) {
                 System.out.println(i + ". " + c.toStringSupplier());
                 i++;
             }
