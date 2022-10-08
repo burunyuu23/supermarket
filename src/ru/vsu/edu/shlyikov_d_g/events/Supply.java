@@ -13,7 +13,8 @@ import java.util.*;
 public class Supply {
     private List<Supplier> supplierList;
     private final List<Consignment> consignmentList = new ArrayList<>();
-    private BigDecimal cost;
+    private BigDecimal cost = new BigDecimal(0);
+    private BigDecimal amount = new BigDecimal(0);
 
     private void reset(){
         supplierList = new ArrayList<>();
@@ -40,11 +41,24 @@ public class Supply {
         Scanner scanner = new Scanner(System.in);
 
         do {
+            boolean isEmpty = true;
             showSupplierList();
+
+            for (Supplier s:supplierList) {
+                if (!s.getBasket().isEmpty()){
+                    isEmpty = false;
+                    break;
+                }
+            }
+            if (isEmpty){
+                System.out.println("У поставщиков больше не осталось товаров для Вас.");
+                break;
+            }
+
             System.out.println("Какие товары вы купите?\n" +
                     "Вводите в следующем формате [Номер поставщика-Номер товара-Количество], например [1-2-100, 1-3-125, 2-4-250].");
             add(scanner.nextLine(), supplierList, storage);
-            showCost(ms, scanner);
+            showInfo(ms, storage, scanner);
             System.out.println("Продолжить закупку?");
             String str = scanner.nextLine();
 
@@ -90,7 +104,8 @@ public class Supply {
 
                     BigDecimal a = cTemp.minusAmount(amount);
                     consignment.plusAmount(a);
-                    cost = cost.add(a.multiply(consignment.getUnit_price()));
+                    this.amount = this.amount.add(a);
+                    cost = Utils.round(cost.add(a.multiply(consignment.getUnit_price())),2);
 
                     equals = true;
                 }
@@ -100,16 +115,19 @@ public class Supply {
             }
             if (!equals) {
                 BigDecimal a = cTemp.minusAmount(amount);
-                if (!a.equals(0)) {
+                if (a.compareTo(BigDecimal.valueOf(0)) != 0) {
                     c.setAmount(a);
-                    cost = cost.add(c.getUnit_price().multiply(a));
+                    this.amount = this.amount.add(a);
+                    cost = Utils.round(cost.add(c.getUnit_price().multiply(a)),2);
                     this.consignmentList.add(c);
                 }
             }
 
-            if (cTemp.getAmount().equals(0)){
+            if (cTemp.getAmount().compareTo(BigDecimal.valueOf(0)) == 0){
                 System.out.println("Товар \"" + cTemp.getProduct_name() + "\" закончился!");
             }
+
+            System.out.println();
 
             equals = false;
         }
@@ -138,19 +156,27 @@ public class Supply {
                 }
 
                 BigDecimal amount = c.minusAmount(pu.getAmount());
-
+                this.amount = this.amount.add(amount.multiply(BigDecimal.valueOf(-1)));
                 cost = cost.add(c.getUnit_price().multiply(amount.multiply(BigDecimal.valueOf(-1))));
             }
         }
     }
 
-    private void showCost(MoneyScore ms, Scanner scanner){
+    private void showInfo(MoneyScore ms, Storage storage, Scanner scanner){
         System.out.printf("Общая сумма закупки составила: %.2f руб.\n", cost);
         System.out.printf("У вас осталось %.2f\n", ms.getMoney());
-        while (cost.compareTo(ms.getMoney()) > 0){
-            System.out.println("У вас недостаточно денег для закупки этих товаров");
-            System.err.printf("%.2f/%.2f\n", ms.getMoney(), cost);
-            remove(scanner);
+        System.out.printf("Количество : %s руб.\n", Utils.round(this.amount,2));
+        while (this.cost.compareTo(ms.getMoney()) > 0 || this.amount.compareTo(storage.getCapacity()) > 0){
+            if (this.cost.compareTo(ms.getMoney()) > 0) {
+                System.out.println("У вас недостаточно денег для закупки этих товаров!");
+                System.err.printf("%.2f/%.2f\n", cost, ms.getMoney());
+                remove(scanner);
+            }
+            if (this.amount.compareTo(storage.getCapacity()) > 0){
+                System.out.println("У вас недостаточно места на складе для размещения этих товаров!");
+                System.err.printf("%.2f/%.2f\n", this.amount, storage.getCapacity());
+                remove(scanner);
+            }
         }
     }
 
@@ -159,7 +185,7 @@ public class Supply {
             System.out.println("Корзинка:");
             int i = 1;
             for (Consignment c : consignmentList) {
-                BigDecimal price = c.getAmount().multiply(c.getUnit_price());
+                BigDecimal price = Utils.round(c.getAmount().multiply(c.getUnit_price()), 2);
                 System.out.println("Общая сумма закупки этого товара: " + price);
                 System.out.println(i + ". " + c.toStringSupplier());
                 i++;

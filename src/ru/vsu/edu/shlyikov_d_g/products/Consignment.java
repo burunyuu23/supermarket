@@ -4,6 +4,7 @@ import ru.vsu.edu.shlyikov_d_g.Utils;
 
 import java.awt.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -132,13 +133,13 @@ public class Consignment {
     }
 
     public void plusAmount(BigDecimal amount) {
-        this.amount = this.amount.add(amount);
+        this.amount = Utils.round(this.amount.add(amount),2);
     }
 
     public BigDecimal minusAmount(BigDecimal amount) {
         BigDecimal a = getMinusAmount(amount);
-        this.amount = this.amount.add(a.multiply(BigDecimal.valueOf(-1)));
-        return a;
+        this.amount = Utils.round(this.amount.add(a.multiply(BigDecimal.valueOf(-1))),2);
+        return Utils.round(a, 2);
     }
 
     private BigDecimal getMinusAmount(BigDecimal amount) {
@@ -209,7 +210,7 @@ public class Consignment {
 
     private BigDecimal amountRandom(){
         double d = Math.random() * 1000 + 399;
-        return new BigDecimal(d);
+        return Utils.round(new BigDecimal(d), 2);
     }
 
     public void setAmountRandom(){

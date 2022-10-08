@@ -54,14 +54,15 @@ public class Utils {
         return pu;
     }
 
-    public static double round(double value, int places) {
-
-        MathContext mathContext = new MathContext(15, RoundingMode.HALF_UP); // для double
-        BigDecimal bigDecimal = new BigDecimal(value, mathContext);
-        bigDecimal = bigDecimal.setScale(2, RoundingMode.DOWN);
-        value = bigDecimal.doubleValue();
-
-        return value;
+    public static BigDecimal round(BigDecimal value, int places) {
+        return value.setScale(places, RoundingMode.HALF_UP);
+    }
+//        MathContext mathContext = new MathContext(15, RoundingMode.HALF_UP); // для double
+//        BigDecimal bigDecimal = new BigDecimal(value, mathContext);
+//        bigDecimal = bigDecimal.setScale(2, RoundingMode.DOWN);
+//        value = bigDecimal.doubleValue();
+//
+//        return value;
 
 //        DecimalFormat decimalFormat = new DecimalFormat("#." + "#".repeat(places));
 //        return Double.parseDouble(decimalFormat.format(value));
@@ -71,5 +72,4 @@ public class Utils {
 //        value = value * factor;
 //        long tmp = Math.round(value);
 //        return (double) tmp / factor;
-    }
 }

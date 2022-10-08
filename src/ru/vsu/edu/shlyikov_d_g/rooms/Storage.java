@@ -7,7 +7,11 @@ import java.util.List;
 public class Storage extends Room {
 
     public Storage(int capacity) {
-        this.capacity = capacity;
+        super(capacity);
+    }
+
+    public Storage(double capacity) {
+        super(capacity);
     }
 
     public void addElements(List<Consignment> consignmentList){
