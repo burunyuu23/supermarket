@@ -13,8 +13,4 @@ public class Storage extends Room {
     public Storage(double capacity) {
         super(capacity);
     }
-
-    public void addElements(List<Consignment> consignmentList){
-
-    }
 }
