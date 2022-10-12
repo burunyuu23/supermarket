@@ -19,71 +19,71 @@ public class Products {
         a = new Consignment("FRU-APP-CHA",
                 "Яблоко 'Чемпион'", "кг",116.99,
                 6,false,false);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("FRU-APP-SEA",
                 "Яблоко 'Сезонные'", "кг",74.99,
                 6,false,false);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("FRU-APP-GOL",
                 "Яблоко 'Гольден'", "кг",116.99,
                 6,false,false);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("FRU-APP-GRA",
                 "Яблоко 'Гренни Смит'", "кг",99.99,
                 6,false,false);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
 
         a = new Consignment("FRU-BAN-WEI",
                 "Бананы 'Весовые'", "кг",61.99,
                 3,false,false);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("FRU-BAN-GRE",
                 "Бананы 'Зелёные'", "кг",74.99,
                 3,false,false);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("FRU-BAN-RED",
                 "Бананы 'Красные'", "кг",87.99,
                 3,false,false);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("FRU-BAN-MIN",
                 "Бананы 'Мини'", "кг",141.99,
                 3,false,false);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
 
 
         a = new Consignment("MIL-MIL-PRO",
                 "Молоко 'Простоквашино' 970мл 1.5%", "шт",91.99,
                 2,false,true);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("MIL-MIL-DOM",
                 "Молоко 'Домик в деревне' 950мл 3.2%", "шт",70.99,
                 2,false,true);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("MIL-MIL-ECO",
                 "Молоко 'ЭкоНива' 1л 3.2%", "шт",68.99,
                 2,false,true);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
 
         a = new Consignment("MIL-CHE-GAU",
                 "Сыр 'Гауда'", "кг",479.99,
                 4,false,true);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("MIL-CHE-MOZ",
                 "Сыр 'Моцарелла'", "кг",674.99,
                 4,false,true);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("MIL-CHE-MAA",
                 "Сыр 'Маасдам'", "кг",819.99,
                 4,false,true);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("MIL-CHE-SUL",
                 "Сыр 'Сулугуни'", "кг",659.99,
                 4,false,true);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
         a = new Consignment("MIL-CHE-CHE",
                 "Сыр 'Чеддер'", "кг",749.99,
                 4,false,true);
-        product_range.put(a.getVendor_code(), a);
+        product_range.put(a.getVendorCode(), a);
     }
 
     public Consignment getProduct(String vendor_code){

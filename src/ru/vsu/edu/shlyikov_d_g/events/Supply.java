@@ -6,35 +6,41 @@ import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
 import ru.vsu.edu.shlyikov_d_g.products.PurchaseUnit;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
+import ru.vsu.edu.shlyikov_d_g.visualisation.GameVisualise;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 public class Supply {
     private List<Supplier> supplierList;
-    private final List<Consignment> consignmentList = new ArrayList<>();
-    private BigDecimal cost = new BigDecimal(0);
-    private BigDecimal amount = new BigDecimal(0);
+    private List<Consignment> consignmentList;
+    private BigDecimal cost;
+    private BigDecimal amount;
+
+    private GameVisualise visualiser;
+
+    public Supply(GameVisualise visualiser, List<Consignment> consignmentList, List<Supplier> supplierList){
+        this.visualiser = visualiser;
+        this.consignmentList = consignmentList;
+        this.supplierList = supplierList;
+        cost = new BigDecimal(0);
+        amount = new BigDecimal(0);
+    }
 
     private void reset(){
-        supplierList = new ArrayList<>();
         supplierList.add(new Supplier());
         supplierList.add(new Supplier());
         supplierList.add(new Supplier());
     }
 
-    public void supply(MoneyScore ms, Storage storage){
+    public List<Consignment> supply(MoneyScore ms, Storage storage){
         reset();
-        System.out.println("Время принимать поставки товаров:");
+
+        visualiser.supplyStart();
 
         process(supplierList, ms, storage);
-    }
 
-    private void showSupplierList(){
-        for (int i = 0; i < supplierList.size(); i++) {
-            System.out.printf("Товары %d-го поставщика:\n", i+1);
-            supplierList.get(i).showProducts();
-        }
+        return consignmentList;
     }
 
     private void process(List<Supplier> supplierList, MoneyScore ms, Storage storage){
@@ -42,7 +48,7 @@ public class Supply {
 
         do {
             boolean isEmpty = true;
-            showSupplierList();
+            visualiser.showSuppliers(supplierList);
 
             for (Supplier s:supplierList) {
                 if (!s.getBasket().isEmpty()){
@@ -51,42 +57,28 @@ public class Supply {
                 }
             }
             if (isEmpty){
-                System.out.println("У поставщиков больше не осталось товаров для Вас.");
+                visualiser.noConsignment();
                 break;
             }
 
-            System.out.println("Какие товары вы купите?\n" +
-                    "Вводите в следующем формате [Номер поставщика-Номер товара-Количество], например [1-2-100, 1-3-125, 2-4-250].");
+            visualiser.inputSupplyConsignments();
+
             add(scanner.nextLine(), supplierList, storage);
             showInfo(ms, storage, scanner);
-            System.out.println("Продолжить закупку?");
-            String str = scanner.nextLine();
 
-            if (str.toLowerCase(Locale.ROOT).equals("нет")){
+            if (!visualiser.continueSupply(scanner)){
                 break;
             }
-            else{
-                while (!str.toLowerCase(Locale.ROOT).equals("да")){
-                    System.out.println("Не могу разобрать, что вы сказали. Можете повторить?");
-                    System.out.println("Продолжить закупку?");
-                    str = scanner.nextLine();
-                    if (str.toLowerCase(Locale.ROOT).equals("нет")){
-                        break;
-                    }
-                }
-            }
-            System.out.println();
-            showConsignment();
+            visualiser.showConsignments(consignmentList);
         }
         while (true);
-
-//        showConsignment();
     }
 
     //  [3-1-1020,2-3-49,2-3-500,1-2-10,2-3-500]
 
-    protected void add(String str, List<Supplier> supplierList, Storage storage){
+    private void add(String str, List<Supplier> supplierList, Storage storage){
         // стоит ли переносить взаимодействие с другими классами в них самих?
+        // storage передавать как аргумент или присваивать в него значения листа
         boolean equals = false;
         for (String s:Utils.regexStr(str,"\\w+-\\w+-\\w+[\\.\\w+]*")) {
             PurchaseUnit pu = Utils.regexPurchaseUnit(s, "\\w+[\\.\\w+]*");
@@ -100,7 +92,7 @@ public class Supply {
 
             for (Consignment consignment : this.consignmentList) {
 
-                if (consignment.getVendor_code().equals(c.getVendor_code())){
+                if (consignment.getVendorCode().equals(c.getVendorCode())){
 
                     BigDecimal a = cTemp.minusAmount(amount);
                     consignment.plusAmount(a);
@@ -124,30 +116,25 @@ public class Supply {
             }
 
             if (cTemp.getAmount().compareTo(BigDecimal.valueOf(0)) == 0){
-                System.out.println("Товар \"" + cTemp.getProduct_name() + "\" закончился!");
+                visualiser.consignmentIsOver(cTemp);
             }
-
-            System.out.println();
 
             equals = false;
         }
     }
 
     protected void remove(Scanner scanner){
-        System.out.println("""
-                Удалите товары из списка, например, введя их в формате [<позиция>-<количество>, <позиция>-<количество>]
-                Например: [1-10,3-200,5-1]
-                При этом удалятся товары под номерами 1 10 ед.,3 200 ед. и 5 1 ед.
-                Если количество удаляемого > количество в корзинке, товар удалится из корзины полностью.
-                """);
-        showConsignment();
+        visualiser.remove();
+        visualiser.showConsignments(consignmentList);
         String str = scanner.nextLine();
         List<PurchaseUnit> puList = new ArrayList<>();
         for (String s:Utils.regexStr(str,"\\w+-\\w+[\\.\\w+]*")) {
             PurchaseUnit pu = Utils.regexPurchaseUnit(s, "\\w+[\\.\\w+]*");
             puList.add(pu);
         }
+
         puList.sort(Comparator.comparing((PurchaseUnit pu) -> pu.getNums().get(0)).reversed());
+
         for (PurchaseUnit pu:puList) {
             for (int i : pu.getNums()) {
                 Consignment c = consignmentList.get(i-1);
@@ -163,33 +150,27 @@ public class Supply {
     }
 
     private void showInfo(MoneyScore ms, Storage storage, Scanner scanner){
-        System.out.printf("Общая сумма закупки составила: %.2f руб.\n", cost);
-        System.out.printf("У вас осталось %.2f\n", ms.getMoney());
-        System.out.printf("Количество : %s руб.\n", Utils.round(this.amount,2));
-        while (this.cost.compareTo(ms.getMoney()) > 0 || this.amount.compareTo(storage.getCapacity()) > 0){
-            if (this.cost.compareTo(ms.getMoney()) > 0) {
-                System.out.println("У вас недостаточно денег для закупки этих товаров!");
-                System.err.printf("%.2f/%.2f\n", cost, ms.getMoney());
-                remove(scanner);
-            }
-            if (this.amount.compareTo(storage.getCapacity()) > 0){
-                System.out.println("У вас недостаточно места на складе для размещения этих товаров!");
-                System.err.printf("%.2f/%.2f\n", this.amount, storage.getCapacity());
-                remove(scanner);
-            }
-        }
-    }
 
-    private void showConsignment(){
-        if (!consignmentList.isEmpty()) {
-            System.out.println("Корзинка:");
-            int i = 1;
-            for (Consignment c : consignmentList) {
-                BigDecimal price = Utils.round(c.getAmount().multiply(c.getUnit_price()), 2);
-                System.out.println("Общая сумма закупки этого товара: " + price);
-                System.out.println(i + ". " + c.toStringSupplier());
-                i++;
+        visualiser.showInfoGeneral(ms, this.cost, this.amount);
+
+        boolean costed = this.cost.compareTo(ms.getMoney()) > 0;
+        boolean amounted = this.amount.compareTo(storage.getCapacity()) > 0;
+        while (costed || amounted){
+            if (costed && amounted){
+                visualiser.showInfoCost(ms, cost);
+                visualiser.showInfoAmount(amount, storage);
+                remove(scanner);
             }
+            else if (costed) {
+                visualiser.showInfoCost(ms, cost);
+                remove(scanner);
+            }
+            else {
+                visualiser.showInfoAmount(amount, storage);
+                remove(scanner);
+            }
+            costed = this.cost.compareTo(ms.getMoney()) > 0;
+            amounted = this.amount.compareTo(storage.getCapacity()) > 0;
         }
     }
 }

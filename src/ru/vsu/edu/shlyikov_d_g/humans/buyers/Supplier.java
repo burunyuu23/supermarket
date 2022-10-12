@@ -24,14 +24,4 @@ public class Supplier extends Buyer {
             c.setAmountRandom();
         }
     }
-
-    public void showProducts(){
-        int i = 1;
-        for (Consignment c : basket) {
-            if (!c.getAmount().equals(0)) {
-                System.out.println(i + ". " + c.toStringSupplier());
-                i++;
-            }
-        }
-    }
 }

@@ -4,8 +4,8 @@ import ru.vsu.edu.shlyikov_d_g.Utils;
 
 import java.awt.*;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 public class Consignment {
@@ -20,21 +20,22 @@ public class Consignment {
     private BigDecimal unit_price;
     private BigDecimal curr_price;
     private int discount;
+    private int batchNumber;
     private LocalDateTime date_of_manufacture;
     private int expiration_days;
     private boolean age_restricted;
     private boolean should_be_in_the_fridge;
 
     // perfect object creation
-    public Consignment(String vendor_code){
+    public Consignment(String vendor_code) {
         this.vendor_code = vendor_code;
     }
 
     // test object creation (w/o database) or nested creation from database
     public Consignment(String product_name, BigDecimal amount, String measure,
                        BigDecimal unit_price, LocalDateTime date_of_manufacture,
-                       int expiration_days,boolean age_restricted,
-                               boolean should_be_in_the_fridge){
+                       int expiration_days, boolean age_restricted,
+                       boolean should_be_in_the_fridge) {
         this.product_name = product_name;
         this.amount = amount;
         this.measure = measure;
@@ -46,8 +47,8 @@ public class Consignment {
     }
 
     // obj clone
-    public Consignment(Consignment c){
-        this.vendor_code = c.getVendor_code();
+    public Consignment(Consignment c) {
+        this.vendor_code = c.getVendorCode();
         this.product_name = c.getProduct_name();
         this.amount = c.getAmount();
         this.measure = c.getMeasure();
@@ -55,13 +56,14 @@ public class Consignment {
         this.date_of_manufacture = c.getDate_of_manufacture();
         this.expiration_days = c.getExpiration_days();
         this.age_restricted = c.getAge_restricted();
-        this.should_be_in_the_fridge = c.getShould_be_in_the_fridge();;
+        this.should_be_in_the_fridge = c.getShould_be_in_the_fridge();
+        ;
     }
 
     public Consignment(String vendor_code, String product_name, BigDecimal amount, String measure,
                        BigDecimal unit_price, LocalDateTime date_of_manufacture,
-                       int expiration_days,boolean age_restricted,
-                       boolean should_be_in_the_fridge){
+                       int expiration_days, boolean age_restricted,
+                       boolean should_be_in_the_fridge) {
         this.vendor_code = vendor_code;
         this.product_name = product_name;
         this.amount = amount;
@@ -76,7 +78,7 @@ public class Consignment {
     // for set with all products
     public Consignment(String vendor_code, String product_name, String measure,
                        double unit_price, int expiration_days, boolean age_restricted,
-                       boolean should_be_in_the_fridge){
+                       boolean should_be_in_the_fridge) {
         this.vendor_code = vendor_code;
         this.product_name = product_name;
         this.measure = measure;
@@ -87,13 +89,24 @@ public class Consignment {
     }
 
 
-
-    public String getVendor_code() {
+    public String getVendorCode() {
         return vendor_code;
+    }
+
+    public void setVendorCode(String vendor_code) {
+        this.vendor_code = vendor_code;
     }
 
     public int getId() {
         return id;
+    }
+
+    public int getBatchNumber() {
+        return batchNumber;
+    }
+
+    public void setBatchNumber(int batchNumber) {
+        this.batchNumber = batchNumber;
     }
 
     public void setId(int a) {
@@ -133,23 +146,21 @@ public class Consignment {
     }
 
     public void plusAmount(BigDecimal amount) {
-        this.amount = Utils.round(this.amount.add(amount),2);
+        this.amount = Utils.round(this.amount.add(amount), 2);
     }
 
     public BigDecimal minusAmount(BigDecimal amount) {
         BigDecimal a = getMinusAmount(amount);
-        this.amount = Utils.round(this.amount.add(a.multiply(BigDecimal.valueOf(-1))),2);
+        this.amount = Utils.round(this.amount.add(a.multiply(BigDecimal.valueOf(-1))), 2);
         return Utils.round(a, 2);
     }
 
     private BigDecimal getMinusAmount(BigDecimal amount) {
-        if (this.amount.add(amount.multiply(new BigDecimal(-1))).compareTo(new BigDecimal(0)) < 0){
+        if (this.amount.add(amount.multiply(new BigDecimal(-1))).compareTo(new BigDecimal(0)) < 0) {
             return this.amount;
-        }
-        else if (amount.compareTo(new BigDecimal(0)) <= 0){
+        } else if (amount.compareTo(new BigDecimal(0)) <= 0) {
             return new BigDecimal(0);
-        }
-        else {
+        } else {
             return amount;
         }
     }
@@ -162,8 +173,8 @@ public class Consignment {
         return should_be_in_the_fridge;
     }
 
-    public boolean idCheck(Consignment c){
-        if (Objects.equals(this.vendor_code, c.getVendor_code())){
+    public boolean idCheck(Consignment c) {
+        if (Objects.equals(this.vendor_code, c.getVendorCode())) {
             id = c.getId() + 1;
             return true;
         }
@@ -171,62 +182,60 @@ public class Consignment {
     }
 
     // Цена, с наценкой
-    public void setCurr_price(int percent){
-        this.curr_price = this.unit_price.multiply(new BigDecimal(1)).add(new BigDecimal(percent/100.0)).add(BigDecimal.valueOf(-0.01));
+    public void setCurr_price(int percent) {
+        this.curr_price = this.unit_price.multiply(new BigDecimal(1)).add(new BigDecimal(percent / 100.0)).add(BigDecimal.valueOf(-0.01));
     }
 
     // Цена, введённая игроком
-    public void setCurr_priceManual(int price){
+    public void setCurr_priceManual(int price) {
         this.curr_price = new BigDecimal(price);
     }
 
-    public void setDiscount(int d){
+    public void setDiscount(int d) {
         this.discount = d;
-        this.curr_price = this.curr_price.multiply(new BigDecimal(1)).add(new BigDecimal(discount/100.0)).add(BigDecimal.valueOf(-0.01));
+        this.curr_price = this.curr_price.multiply(new BigDecimal(1)).add(new BigDecimal(discount / 100.0)).add(BigDecimal.valueOf(-0.01));
     }
 
-    private String rightDays(){
-        if (expiration_days % 10 == 1 && expiration_days % 100 != 11){
+    private String rightDays() {
+        if (expiration_days % 10 == 1 && expiration_days % 100 != 11) {
             return "день";
-        }
-        else if (expiration_days % 10 == 2 || expiration_days % 10 == 3
+        } else if (expiration_days % 10 == 2 || expiration_days % 10 == 3
                 || expiration_days % 10 == 4 && expiration_days % 100 != 12
-                && expiration_days % 100 != 13 && expiration_days % 100 != 14){
+                && expiration_days % 100 != 13 && expiration_days % 100 != 14) {
             return "дня";
-        }
-        else{
+        } else {
             return "дней";
         }
 
     }
 
-    private boolean checkKG(){
+    private boolean checkKG() {
         return this.measure.equals("кг");
     }
 
-    private boolean checkSH(){
+    private boolean checkSH() {
         return this.measure.equals("шт");
     }
 
-    private BigDecimal amountRandom(){
+    private BigDecimal amountRandom() {
         double d = Math.random() * 1000 + 399;
         return Utils.round(new BigDecimal(d), 2);
     }
 
-    public void setAmountRandom(){
+    public void setAmountRandom() {
         setAmount(amountRandom());
     }
 
-    public String toStringSupplier(){
+    public String toStringSupplier() {
         return product_name + "; " +
                 "\nколичество: " + amount + ";" +
                 "\nпо цене за " + measure + ": " + unit_price + ";" +
-                    "\nсрок годности: " + expiration_days + " " + rightDays() +
+                "\nсрок годности: " + expiration_days + " " + rightDays() +
                 (age_restricted ? ";\nне продаётся лицам младше 18 лет" : "") +
                 (should_be_in_the_fridge ? ";\nдолжен храниться в холодильнике" : "") + ".\n";
     }
 
-    public String toStringStore(){
+    public String toStringStore() {
         return product_name + "; " +
                 "\nколичество: " + amount + ";" +
                 "\nпо цене за " + measure + ": " + unit_price + ";" +
@@ -235,7 +244,7 @@ public class Consignment {
                 (should_be_in_the_fridge ? ";\nдолжен храниться в холодильнике" : "") + ".";
     }
 
-    public String toStringCustomer(){
+    public String toStringCustomer() {
         return product_name + "; " +
                 "\nколичество: " + amount + ";" +
                 "\nпо цене за " + measure + ": " + unit_price + ";" +
@@ -243,5 +252,5 @@ public class Consignment {
                 (age_restricted ? ";\nне продаётся лицам младше 18 лет" : "") +
                 (should_be_in_the_fridge ? ";\nдолжен храниться в холодильнике" : "") + ".";
     }
-
 }
+
