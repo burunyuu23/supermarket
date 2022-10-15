@@ -5,96 +5,96 @@ import ru.vsu.edu.shlyikov_d_g.Utils;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 public class Consignment {
-    private String vendor_code;
+    private String vendorCode;
     private int id = 1;
     private Image photo;
 
     // this all must be received from vendor code
-    private String product_name;
+    private String productName; // TODO заменить названия
     private BigDecimal amount;
     private String measure; // in kilograms/grams or pieces
-    private BigDecimal unit_price;
-    private BigDecimal curr_price;
+    private BigDecimal unitPrice;
+    private BigDecimal currPrice;
     private int discount;
     private int batchNumber;
-    private LocalDateTime date_of_manufacture;
-    private int expiration_days;
-    private boolean age_restricted;
-    private boolean should_be_in_the_fridge;
+    private LocalDateTime dateOfManufacture;
+    private int expirationDays;
+    private boolean ageRestricted;
+    private boolean shouldBeInTheFridge;
 
     // perfect object creation
-    public Consignment(String vendor_code) {
-        this.vendor_code = vendor_code;
+    public Consignment(String vendorCode) {
+        this.vendorCode = vendorCode;
     }
 
     // test object creation (w/o database) or nested creation from database
     public Consignment(String product_name, BigDecimal amount, String measure,
-                       BigDecimal unit_price, LocalDateTime date_of_manufacture,
-                       int expiration_days, boolean age_restricted,
-                       boolean should_be_in_the_fridge) {
-        this.product_name = product_name;
+                       BigDecimal unitPrice, LocalDateTime dateOfManufacture,
+                       int expirationDays, boolean ageRestricted,
+                       boolean shouldBeInTheFridge) {
+        this.productName = product_name;
         this.amount = amount;
         this.measure = measure;
-        this.unit_price = unit_price;
-        this.date_of_manufacture = date_of_manufacture;
-        this.expiration_days = expiration_days;
-        this.age_restricted = age_restricted;
-        this.should_be_in_the_fridge = should_be_in_the_fridge;
+        this.unitPrice = unitPrice;
+        this.dateOfManufacture = dateOfManufacture;
+        this.expirationDays = expirationDays;
+        this.ageRestricted = ageRestricted;
+        this.shouldBeInTheFridge = shouldBeInTheFridge;
     }
 
     // obj clone
     public Consignment(Consignment c) {
-        this.vendor_code = c.getVendorCode();
-        this.product_name = c.getProduct_name();
+        this.vendorCode = c.getVendorCode();
+        this.productName = c.getProduct_name();
         this.amount = c.getAmount();
         this.measure = c.getMeasure();
-        this.unit_price = c.getUnit_price();
-        this.date_of_manufacture = c.getDate_of_manufacture();
-        this.expiration_days = c.getExpiration_days();
-        this.age_restricted = c.getAge_restricted();
-        this.should_be_in_the_fridge = c.getShould_be_in_the_fridge();
+        this.unitPrice = c.getUnitPrice();
+        this.dateOfManufacture = c.getDateOfManufacture();
+        this.expirationDays = c.getExpirationDays();
+        this.ageRestricted = c.getAgeRestricted();
+        this.shouldBeInTheFridge = c.getShouldBeInTheFridge();
         ;
     }
 
-    public Consignment(String vendor_code, String product_name, BigDecimal amount, String measure,
-                       BigDecimal unit_price, LocalDateTime date_of_manufacture,
-                       int expiration_days, boolean age_restricted,
-                       boolean should_be_in_the_fridge) {
-        this.vendor_code = vendor_code;
-        this.product_name = product_name;
+    public Consignment(String vendorCode, String product_name, BigDecimal amount, String measure,
+                       BigDecimal unitPrice, LocalDateTime dateOfManufacture,
+                       int expirationDays, boolean ageRestricted,
+                       boolean shouldBeInTheFridge) {
+        this.vendorCode = vendorCode;
+        this.productName = product_name;
         this.amount = amount;
         this.measure = measure;
-        this.unit_price = unit_price;
-        this.date_of_manufacture = date_of_manufacture;
-        this.expiration_days = expiration_days;
-        this.age_restricted = age_restricted;
-        this.should_be_in_the_fridge = should_be_in_the_fridge;
+        this.unitPrice = unitPrice;
+        this.dateOfManufacture = dateOfManufacture;
+        this.expirationDays = expirationDays;
+        this.ageRestricted = ageRestricted;
+        this.shouldBeInTheFridge = shouldBeInTheFridge;
     }
 
     // for set with all products
-    public Consignment(String vendor_code, String product_name, String measure,
-                       double unit_price, int expiration_days, boolean age_restricted,
-                       boolean should_be_in_the_fridge) {
-        this.vendor_code = vendor_code;
-        this.product_name = product_name;
+    public Consignment(String vendorCode, String product_name, String measure,
+                       double unitPrice, int expirationDays, boolean ageRestricted,
+                       boolean shouldBeInTheFridge) {
+        this.vendorCode = vendorCode;
+        this.productName = product_name;
         this.measure = measure;
-        this.unit_price = BigDecimal.valueOf(unit_price);
-        this.expiration_days = expiration_days;
-        this.age_restricted = age_restricted;
-        this.should_be_in_the_fridge = should_be_in_the_fridge;
+        this.unitPrice = BigDecimal.valueOf(unitPrice);
+        this.expirationDays = expirationDays;
+        this.ageRestricted = ageRestricted;
+        this.shouldBeInTheFridge = shouldBeInTheFridge;
     }
+
 
 
     public String getVendorCode() {
-        return vendor_code;
+        return vendorCode;
     }
 
     public void setVendorCode(String vendor_code) {
-        this.vendor_code = vendor_code;
+        this.vendorCode = vendor_code;
     }
 
     public int getId() {
@@ -118,7 +118,7 @@ public class Consignment {
     }
 
     public String getProduct_name() {
-        return product_name;
+        return productName;
     }
 
     public BigDecimal getAmount() {
@@ -129,20 +129,20 @@ public class Consignment {
         return measure;
     }
 
-    public BigDecimal getUnit_price() {
-        return unit_price;
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
     }
 
-    public LocalDateTime getDate_of_manufacture() {
-        return date_of_manufacture;
+    public LocalDateTime getDateOfManufacture() {
+        return dateOfManufacture;
     }
 
-    public int getExpiration_days() {
-        return expiration_days;
+    public int getExpirationDays() {
+        return expirationDays;
     }
 
     public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+        this.amount = Utils.round(amount, 2);
     }
 
     public void plusAmount(BigDecimal amount) {
@@ -165,16 +165,16 @@ public class Consignment {
         }
     }
 
-    public boolean getAge_restricted() {
-        return age_restricted;
+    public boolean getAgeRestricted() {
+        return ageRestricted;
     }
 
-    public boolean getShould_be_in_the_fridge() {
-        return should_be_in_the_fridge;
+    public boolean getShouldBeInTheFridge() {
+        return shouldBeInTheFridge;
     }
 
     public boolean idCheck(Consignment c) {
-        if (Objects.equals(this.vendor_code, c.getVendorCode())) {
+        if (Objects.equals(this.vendorCode, c.getVendorCode())) {
             id = c.getId() + 1;
             return true;
         }
@@ -182,26 +182,26 @@ public class Consignment {
     }
 
     // Цена, с наценкой
-    public void setCurr_price(int percent) {
-        this.curr_price = this.unit_price.multiply(new BigDecimal(1)).add(new BigDecimal(percent / 100.0)).add(BigDecimal.valueOf(-0.01));
+    public void setCurrPrice(int percent) {
+        this.currPrice = this.unitPrice.multiply(new BigDecimal(1)).add(new BigDecimal(percent / 100.0)).add(BigDecimal.valueOf(-0.01));
     }
 
     // Цена, введённая игроком
     public void setCurr_priceManual(int price) {
-        this.curr_price = new BigDecimal(price);
+        this.currPrice = new BigDecimal(price);
     }
 
     public void setDiscount(int d) {
         this.discount = d;
-        this.curr_price = this.curr_price.multiply(new BigDecimal(1)).add(new BigDecimal(discount / 100.0)).add(BigDecimal.valueOf(-0.01));
+        this.currPrice = this.currPrice.multiply(new BigDecimal(1)).add(new BigDecimal(discount / 100.0)).add(BigDecimal.valueOf(-0.01));
     }
 
     private String rightDays() {
-        if (expiration_days % 10 == 1 && expiration_days % 100 != 11) {
+        if (expirationDays % 10 == 1 && expirationDays % 100 != 11) {
             return "день";
-        } else if (expiration_days % 10 == 2 || expiration_days % 10 == 3
-                || expiration_days % 10 == 4 && expiration_days % 100 != 12
-                && expiration_days % 100 != 13 && expiration_days % 100 != 14) {
+        } else if (expirationDays % 10 == 2 || expirationDays % 10 == 3
+                || expirationDays % 10 == 4 && expirationDays % 100 != 12
+                && expirationDays % 100 != 13 && expirationDays % 100 != 14) {
             return "дня";
         } else {
             return "дней";
@@ -227,30 +227,41 @@ public class Consignment {
     }
 
     public String toStringSupplier() {
-        return product_name + "; " +
+        return productName + "; " +
                 "\nколичество: " + amount + ";" +
-                "\nпо цене за " + measure + ": " + unit_price + ";" +
-                "\nсрок годности: " + expiration_days + " " + rightDays() +
-                (age_restricted ? ";\nне продаётся лицам младше 18 лет" : "") +
-                (should_be_in_the_fridge ? ";\nдолжен храниться в холодильнике" : "") + ".\n";
+                "\nпо цене за " + measure + ": " + unitPrice + ";" +
+                "\nсрок годности: " + expirationDays + " " + rightDays() +
+                (ageRestricted ? ";\nне продаётся лицам младше 18 лет" : "") +
+                (shouldBeInTheFridge ? ";\nдолжен храниться в холодильнике" : "") + ".\n";
     }
 
     public String toStringStore() {
-        return product_name + "; " +
+        return productName + "; " +
                 "\nколичество: " + amount + ";" +
-                "\nпо цене за " + measure + ": " + unit_price + ";" +
-                "\nсрок годности: " + expiration_days + " " + rightDays() +
-                (age_restricted ? ";\nне продаётся лицам младше 18 лет" : "") +
-                (should_be_in_the_fridge ? ";\nдолжен храниться в холодильнике" : "") + ".";
+                "\nпо цене за " + measure + ": " + unitPrice + ";" +
+                "\nсрок годности: " + expirationDays + " " + rightDays() +
+                (ageRestricted ? ";\nне продаётся лицам младше 18 лет" : "") +
+                (shouldBeInTheFridge ? ";\nдолжен храниться в холодильнике" : "") + ".\n";
+    }
+
+    public String toStringStorage() {
+        return "артикул: " + vendorCode + "; \n"
+                + productName + "; " +
+                "\nномер партии: " + (batchNumber + 1) + ";" +
+                "\nколичество: " + amount + ";" +
+                "\nпо цене за " + measure + ": " + unitPrice + ";" +
+                "\nсрок годности: " + expirationDays + " " + rightDays() +
+                (ageRestricted ? ";\nне продаётся лицам младше 18 лет" : "") +
+                (shouldBeInTheFridge ? ";\nдолжен храниться в холодильнике" : "") + ".\n";
     }
 
     public String toStringCustomer() {
-        return product_name + "; " +
+        return productName + "; " +
                 "\nколичество: " + amount + ";" +
-                "\nпо цене за " + measure + ": " + unit_price + ";" +
-                "\nсрок годности: " + expiration_days + " " + rightDays() +
-                (age_restricted ? ";\nне продаётся лицам младше 18 лет" : "") +
-                (should_be_in_the_fridge ? ";\nдолжен храниться в холодильнике" : "") + ".";
+                "\nпо цене за " + measure + ": " + unitPrice + ";" +
+                "\nсрок годности: " + expirationDays + " " + rightDays() +
+                (ageRestricted ? ";\nне продаётся лицам младше 18 лет" : "") +
+                (shouldBeInTheFridge ? ";\nдолжен храниться в холодильнике" : "") + ".\n";
     }
 }
 

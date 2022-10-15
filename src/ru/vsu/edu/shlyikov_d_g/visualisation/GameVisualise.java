@@ -3,6 +3,8 @@ package ru.vsu.edu.shlyikov_d_g.visualisation;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
+import ru.vsu.edu.shlyikov_d_g.products.PurchaseUnit;
+import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 
 import java.lang.reflect.Method;
@@ -12,6 +14,8 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 public interface GameVisualise {
+
+    void helpStart();
 
     void showProducts(List<Consignment> basket);
 
@@ -29,11 +33,22 @@ public interface GameVisualise {
 
     void showConsignments(List<Consignment> consignmentList);
 
-    boolean continueSupply(Scanner scanner);
+    boolean continueEvent(String name);
 
     void supplyStart();
 
     void consignmentIsOver(Consignment c);
 
     void remove();
+
+    void toCapacityError(BigDecimal size, Room room);
+
+    void showRoom(Room room, String roomName);
+
+    void askRoom(Room room, String roomName);
+
+    List<String> getSupply();
+
+    List<PurchaseUnit> getFromRoom(String nameRoom);
+
 }

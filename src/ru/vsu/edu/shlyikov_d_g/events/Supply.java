@@ -44,8 +44,6 @@ public class Supply {
     }
 
     private void process(List<Supplier> supplierList, MoneyScore ms, Storage storage){
-        Scanner scanner = new Scanner(System.in);
-
         do {
             boolean isEmpty = true;
             visualiser.showSuppliers(supplierList);
@@ -63,10 +61,10 @@ public class Supply {
 
             visualiser.inputSupplyConsignments();
 
-            add(scanner.nextLine(), supplierList, storage);
-            showInfo(ms, storage, scanner);
+            add(supplierList);
+            showInfo(ms, storage);
 
-            if (!visualiser.continueSupply(scanner)){
+            if (!visualiser.continueEvent("закупку")){
                 break;
             }
             visualiser.showConsignments(consignmentList);
@@ -76,11 +74,10 @@ public class Supply {
 
     //  [3-1-1020,2-3-49,2-3-500,1-2-10,2-3-500]
 
-    private void add(String str, List<Supplier> supplierList, Storage storage){
-        // стоит ли переносить взаимодействие с другими классами в них самих?
-        // storage передавать как аргумент или присваивать в него значения листа
+    private void add(List<Supplier> supplierList){
         boolean equals = false;
-        for (String s:Utils.regexStr(str,"\\w+-\\w+-\\w+[\\.\\w+]*")) {
+
+        for (String s: visualiser.getSupply()) { // заменить
             PurchaseUnit pu = Utils.regexPurchaseUnit(s, "\\w+[\\.\\w+]*");
 
             int num_supplier = pu.getNums().get(0) - 1;
@@ -97,7 +94,7 @@ public class Supply {
                     BigDecimal a = cTemp.minusAmount(amount);
                     consignment.plusAmount(a);
                     this.amount = this.amount.add(a);
-                    cost = Utils.round(cost.add(a.multiply(consignment.getUnit_price())),2);
+                    cost = Utils.round(cost.add(a.multiply(consignment.getUnitPrice())),2);
 
                     equals = true;
                 }
@@ -110,7 +107,7 @@ public class Supply {
                 if (a.compareTo(BigDecimal.valueOf(0)) != 0) {
                     c.setAmount(a);
                     this.amount = this.amount.add(a);
-                    cost = Utils.round(cost.add(c.getUnit_price().multiply(a)),2);
+                    cost = Utils.round(cost.add(c.getUnitPrice().multiply(a)),2);
                     this.consignmentList.add(c);
                 }
             }
@@ -123,33 +120,31 @@ public class Supply {
         }
     }
 
-    protected void remove(Scanner scanner){
+    protected void remove(){
         visualiser.remove();
         visualiser.showConsignments(consignmentList);
-        String str = scanner.nextLine();
+
         List<PurchaseUnit> puList = new ArrayList<>();
-        for (String s:Utils.regexStr(str,"\\w+-\\w+[\\.\\w+]*")) {
-            PurchaseUnit pu = Utils.regexPurchaseUnit(s, "\\w+[\\.\\w+]*");
-            puList.add(pu);
-        }
+
+        puList = visualiser.getFromRoom("закупку");
 
         puList.sort(Comparator.comparing((PurchaseUnit pu) -> pu.getNums().get(0)).reversed());
 
         for (PurchaseUnit pu:puList) {
             for (int i : pu.getNums()) {
                 Consignment c = consignmentList.get(i-1);
-                if (pu.getAmount().compareTo(c.getAmount()) > 0){ // точно ли так
+                if (pu.getAmount().compareTo(c.getAmount()) > 0){
                     consignmentList.remove(i-1);
                 }
 
                 BigDecimal amount = c.minusAmount(pu.getAmount());
                 this.amount = this.amount.add(amount.multiply(BigDecimal.valueOf(-1)));
-                cost = cost.add(c.getUnit_price().multiply(amount.multiply(BigDecimal.valueOf(-1))));
+                cost = cost.add(c.getUnitPrice().multiply(amount.multiply(BigDecimal.valueOf(-1))));
             }
         }
     }
 
-    private void showInfo(MoneyScore ms, Storage storage, Scanner scanner){
+    private void showInfo(MoneyScore ms, Storage storage){
 
         visualiser.showInfoGeneral(ms, this.cost, this.amount);
 
@@ -159,15 +154,15 @@ public class Supply {
             if (costed && amounted){
                 visualiser.showInfoCost(ms, cost);
                 visualiser.showInfoAmount(amount, storage);
-                remove(scanner);
+                remove();
             }
             else if (costed) {
                 visualiser.showInfoCost(ms, cost);
-                remove(scanner);
+                remove();
             }
             else {
                 visualiser.showInfoAmount(amount, storage);
-                remove(scanner);
+                remove();
             }
             costed = this.cost.compareTo(ms.getMoney()) > 0;
             amounted = this.amount.compareTo(storage.getCapacity()) > 0;

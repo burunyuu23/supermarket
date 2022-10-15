@@ -4,16 +4,34 @@ import ru.vsu.edu.shlyikov_d_g.Utils;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
+import ru.vsu.edu.shlyikov_d_g.products.PurchaseUnit;
+import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 
 import java.math.BigDecimal;
-import java.rmi.MarshalledObject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
-import java.util.function.Function;
 
 public class Console implements GameVisualise {
+
+    @Override
+    public void helpStart(){
+        System.out.println("Добро пожаловать в игру “Супермаркет”!\n" +
+                "В начале игры вы имеете 500 тысяч рублей. На них вы должны будете открыть магазин, который будет приносить вам доход. " +
+                "Закупайте товары, следите за их сроком годности, устанавливайте наценку, при которой прибыль будет наибольшей.\n" +
+                "Игра представляет из себя бесконечность дней, следующих друг за другом.\n" +
+
+                "В начале дня вы закупаете товар на склад, далее переносите его в торговый зал, " +
+                "устанавливаете скидки и, наконец, когда всё готово, открываете магазин.\n" +
+
+                "Во время рабочего дня вам нужно будет следить за количеством товара в торговом зале и пробивать товары на кассе.\n" +
+
+                "После рабочего дня вы будете подсчитывать расходы и доходы, а также составлять дальнейший план развития.\n" +
+
+                "Удачи в росте вашей торговой сети!\n");
+    }
 
     @Override
     public void showProducts(List<Consignment> basket){
@@ -70,7 +88,7 @@ public class Console implements GameVisualise {
             System.out.println("Корзинка:");
             int i = 1;
             for (Consignment c : consignmentList) {
-                BigDecimal price = Utils.round(c.getAmount().multiply(c.getUnit_price()), 2);
+                BigDecimal price = Utils.round(c.getAmount().multiply(c.getUnitPrice()), 2);
                 System.out.println("Общая сумма закупки этого товара: " + price);
                 System.out.println(i + ". " + c.toStringSupplier());
                 i++;
@@ -79,9 +97,10 @@ public class Console implements GameVisualise {
     }
 
     @Override
-    public boolean continueSupply(Scanner scanner) {
+    public boolean continueEvent(String name) {
+        Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("Продолжить закупку?");
+            System.out.printf("Продолжить %s?\n", name);
             String str = scanner.nextLine().toLowerCase(Locale.ROOT);
 
             if (str.equals("нет")) {
@@ -115,5 +134,58 @@ public class Console implements GameVisualise {
                 При этом удалятся товары под номерами 1 10 ед.,3 200 ед. и 5 1 ед.
                 Если количество удаляемого > количество в корзинке, товар удалится из корзины полностью.
                 """);
+    }
+
+    @Override
+    public void toCapacityError(BigDecimal size, Room room) {
+        System.out.println("В торговом зале недостаточно места!");
+        System.err.printf("%.2f, %.2f\n",size,room.getCapacity());
+    }
+
+    @Override
+    public void showRoom(Room room, String roomName) {
+        System.out.printf("%s:\n", roomName);
+        BigDecimal size = new BigDecimal(0);
+        int i = 1;
+        for (String key : room.getElements().keySet()) {
+            for (Integer days : room.getElements().get(key).keySet()) {
+                System.out.println(i + ". " + room.getElements().get(key).get(days).toStringStorage());
+                size = size.add(room.getElements().get(key).get(days).getAmount());
+                i++;
+            }
+        }
+
+        System.out.printf("Вместимость: %.2f/%.2f\n\n", size, room.getCapacity());
+    }
+
+    @Override
+    public void askRoom(Room room, String roomName){
+        System.out.printf("""
+                Выберите какие товары и их количество, которые следует переместить в %s.
+                Учитывайте вместимость и способ хранения продуктов. 
+                Например: [2-3-10, 1-2-14.2]
+                """, roomName);
+    }
+
+    @Override
+    public List<String> getSupply(){
+        Scanner scanner = new Scanner(System.in);
+        return Utils.regexStr(scanner.nextLine(),"\\w+-\\w+-\\w+[\\.\\w+]*");
+    }
+
+    @Override
+    public List<PurchaseUnit> getFromRoom(String nameRoom) {
+        List<PurchaseUnit> list = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+        while (continueEvent(nameRoom)) {
+            System.out.println("Введите что переместить:");
+            String str = scanner.nextLine();
+            for (String s : Utils.regexStr(str, "\\w+-\\w+-\\w+[\\.\\w+]*")) {
+                PurchaseUnit pu = Utils.regexPurchaseUnit(s, "\\w+[\\.\\w+]*");
+                list.add(pu);
+            }
+        }
+
+        return list;
     }
 }
