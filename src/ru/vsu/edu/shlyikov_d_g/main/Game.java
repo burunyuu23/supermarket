@@ -42,8 +42,8 @@ public class Game {
     public Game(){
         date = new DatePrinter();
         money = new MoneyScore(500000);
-        storage = new Storage(1000, "Склад");
-        store = new Store(500, "Торговый зал");
+        storage = new Storage(1000, 200, "Склад");
+        store = new Store(500, 100, "Торговый зал");
     }
 
     private void chooseGameSettings(){
@@ -71,9 +71,8 @@ public class Game {
         day_passed = 0;
         gameVisualise.helpStart();
 
-        supply = new Supply(gameVisualise, new ArrayList<>(), new ArrayList<>());
-        storage.addElements(supply.supply(money, storage));
-        transferGoods.show();
+        supply = new Supply(gameVisualise, money, storage, 3);
+        storage.addElements(supply.supply());
         transferGoods.askStorage();
 
 //        while (true) {

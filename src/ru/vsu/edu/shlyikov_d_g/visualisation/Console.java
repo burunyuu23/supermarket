@@ -1,10 +1,13 @@
 package ru.vsu.edu.shlyikov_d_g.visualisation;
 
 import ru.vsu.edu.shlyikov_d_g.Utils;
+import ru.vsu.edu.shlyikov_d_g.attributes.Amounts;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
-import ru.vsu.edu.shlyikov_d_g.products.PurchaseUnit;
+import ru.vsu.edu.shlyikov_d_g.products.units.PurchaseUnit;
+import ru.vsu.edu.shlyikov_d_g.products.units.TransferUnit;
+import ru.vsu.edu.shlyikov_d_g.products.units.Unit;
 import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 
@@ -64,10 +67,12 @@ public class Console implements GameVisualise {
     }
 
     @Override
-    public void showInfoGeneral(MoneyScore ms, BigDecimal cost, BigDecimal amount){
+    public void showInfoGeneral(MoneyScore ms, BigDecimal cost, Amounts amounts, Storage storage){
         System.out.printf("Общая сумма закупки составила: %.2f руб.\n", cost);
-        System.out.printf("У вас осталось %.2f\n", ms.getMoney());
-        System.out.printf("Количество : %s руб.\n", Utils.round(amount,2));
+        System.out.printf("У вас: %.2f руб.\n", ms.getMoney());
+        System.out.printf("Обычные продукты: %.2f/%.2f\n", amounts.getNonFreeze(), storage.getCapacity());
+        System.out.printf("Продукты, требующие хранения в холодильниках: %.2f/%.2f\n", amounts.getFreeze(), storage.getFridgeCapacity());
+
     }
 
     @Override
@@ -77,9 +82,28 @@ public class Console implements GameVisualise {
     }
 
     @Override
-    public void showInfoAmount(BigDecimal amount, Storage storage){
-        System.out.println("У вас недостаточно места на складе для размещения этих товаров!");
-        System.err.printf("%.2f/%.2f\n", amount, storage.getCapacity());
+    public void showInfoAmount(Amounts amounts, Room room, String roomName, Boolean amountedNonFreeze, Boolean amountedFreeze){
+        String nonFreze = String.format("Обычные продукты: %.2f/%.2f\n", amounts.getNonFreeze(), room.getCapacity());
+        String freeze = String.format("Продукты, требующие хранения в холодильниках: %.2f/%.2f\n", amounts.getFreeze(), room.getFridgeCapacity());
+        if (amountedNonFreeze || amountedFreeze){
+            System.out.printf("У вас недостаточно места %s для размещения этих товаров!\n", roomName);
+            if (amountedNonFreeze && amountedFreeze){
+                System.err.print(nonFreze);
+                System.err.println(freeze);
+            }
+            else if (amountedNonFreeze){
+                System.err.print(nonFreze);
+                System.out.println(freeze);
+            }
+            else {
+                System.err.print(freeze);
+                System.out.println(nonFreze);
+            }
+        }
+        else{
+            System.out.print(nonFreze);
+            System.out.println(freeze);
+        }
     }
 
     @Override
@@ -137,32 +161,28 @@ public class Console implements GameVisualise {
     }
 
     @Override
-    public void toCapacityError(BigDecimal size, Room room) {
-        System.out.println("В торговом зале недостаточно места!");
-        System.err.printf("%.2f, %.2f\n",size,room.getCapacity());
-    }
-
-    @Override
     public void showRoom(Room room, String roomName) {
         System.out.printf("%s:\n", roomName);
-        BigDecimal size = new BigDecimal(0);
+        Amounts amounts = new Amounts(BigDecimal.valueOf(0), BigDecimal.valueOf(0));
         int i = 1;
         for (String key : room.getElements().keySet()) {
             for (Integer days : room.getElements().get(key).keySet()) {
-                System.out.println(i + ". " + room.getElements().get(key).get(days).toStringStorage());
-                size = size.add(room.getElements().get(key).get(days).getAmount());
+                Consignment a = room.getElements().get(key).get(days);
+                System.out.println(i + ". " + a.toStringStorage());
+                amounts.plus(a.getAmount(), a.getShouldBeInTheFridge());
                 i++;
             }
         }
 
-        System.out.printf("Вместимость: %.2f/%.2f\n\n", size, room.getCapacity());
+        System.out.printf("Количество обычных товаров: %.2f/%.2f\n\n", amounts.getNonFreeze(), room.getCapacity());
+        System.out.printf("Количество товаров, требующих хранение в холодильнике: %.2f/%.2f\n\n", amounts.getFreeze(), room.getFridgeCapacity());
     }
 
     @Override
     public void askRoom(Room room, String roomName){
         System.out.printf("""
                 Выберите какие товары и их количество, которые следует переместить в %s.
-                Учитывайте вместимость и способ хранения продуктов. 
+                Учитывайте вместимость склада/торгового зала и способ хранения продуктов. 
                 Например: [2-3-10, 1-2-14.2]
                 """, roomName);
     }
@@ -173,19 +193,32 @@ public class Console implements GameVisualise {
         return Utils.regexStr(scanner.nextLine(),"\\w+-\\w+-\\w+[\\.\\w+]*");
     }
 
-    @Override
-    public List<PurchaseUnit> getFromRoom(String nameRoom) {
-        List<PurchaseUnit> list = new ArrayList<>();
+    private List<String> circle(String operationName, String pattern) {
         Scanner scanner = new Scanner(System.in);
-        while (continueEvent(nameRoom)) {
-            System.out.println("Введите что переместить:");
-            String str = scanner.nextLine();
-            for (String s : Utils.regexStr(str, "\\w+-\\w+-\\w+[\\.\\w+]*")) {
-                PurchaseUnit pu = Utils.regexPurchaseUnit(s, "\\w+[\\.\\w+]*");
-                list.add(pu);
-            }
-        }
+        System.out.printf("Введите что %s:\n", operationName);
+        String str = scanner.nextLine();
+        return Utils.regexStr(str, pattern);
+    }
 
+    @Override
+    public List<PurchaseUnit> getFromRoomPU(String operationName, String pattern) {
+        List<PurchaseUnit> list = new ArrayList<>();
+        for (String s:circle(operationName, pattern)) {
+            PurchaseUnit u = new PurchaseUnit(0, 0, 0);
+            u.regexUnit(s, "\\w+[\\.\\w+]*");
+            list.add(u);
+        }
+        return list;
+    }
+
+    @Override
+    public List<TransferUnit> getFromRoomTU(String operationName, String pattern) {
+        List<TransferUnit> list = new ArrayList<>();
+        for (String s:circle(operationName, pattern)) {
+            TransferUnit u = new TransferUnit(0, 0, 0);
+            u.regexUnit(s, "\\w+[\\.\\w+]*");
+            list.add(u);
+        }
         return list;
     }
 }

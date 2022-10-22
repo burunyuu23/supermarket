@@ -8,25 +8,26 @@ import java.math.BigDecimal;
 import java.util.*;
 
 public abstract class Room {
-    private BigDecimal capacity = new BigDecimal(0);
+    private final BigDecimal capacity;
+    private final BigDecimal fridgeCapacity; // холодильник
+
     private Map<String, Map<Integer, Consignment>> elements = new HashMap<>();
     private String roomName;
 
-    public Room(){
-    }
-
-    public Room(int capacity, String roomName){
+    public Room(int capacity, int fridgeCapacity, String roomName){
         this.capacity = BigDecimal.valueOf(capacity);
+        this.fridgeCapacity = BigDecimal.valueOf(fridgeCapacity);
         this.roomName = roomName;
     }
 
-    public Room(double capacity, String roomName){
+    public Room(double capacity, double fridgeCapacity, String roomName){
         this.capacity = BigDecimal.valueOf(capacity);
+        this.fridgeCapacity = BigDecimal.valueOf(fridgeCapacity);
         this.roomName = roomName;
     }
 
     // Добавить в текущую комнату
-    public void addElements(List<Consignment> consignmentList){
+    public BigDecimal addElements(List<Consignment> consignmentList){
         for (Consignment c:consignmentList) {
             String vendorCode = c.getVendorCode();
             if (!elements.containsKey(vendorCode)) {
@@ -36,10 +37,15 @@ public abstract class Room {
             c.setBatchNumber(num);
             elements.get(vendorCode).put(num, c);
         }
+        return Utils.countAmount(consignmentList);
     }
 
     public BigDecimal getCapacity() {
         return capacity;
+    }
+
+    public BigDecimal getFridgeCapacity(){
+        return fridgeCapacity;
     }
 
     public String getRoomName(){
@@ -51,18 +57,20 @@ public abstract class Room {
     }
 
     // Удалить из текущей комнаты
-    private void removeElements(List<Consignment> consignmentList){
+    private BigDecimal removeElements(List<Consignment> consignmentList){
         for (Consignment c:consignmentList) {
             String vendorCode = c.getVendorCode();
             elements.get(vendorCode).remove(c.getBatchNumber(), c);
         }
+        return Utils.countAmount(consignmentList);
     }
 
     // Переместить элементы в другую комнату
-    public int moveElements(Room room, List<Consignment> list){ // TODO: возвращать amount
+    public BigDecimal moveElements(Room room, List<Consignment> list){
+
         this.removeElements(list);
         room.addElements(list);
 
-        return 0;
+        return Utils.countAmount(list);
     }
 }

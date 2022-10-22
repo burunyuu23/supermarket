@@ -13,7 +13,7 @@ public class Consignment {
     private Image photo;
 
     // this all must be received from vendor code
-    private String productName; // TODO заменить названия
+    private String productName;
     private BigDecimal amount;
     private String measure; // in kilograms/grams or pieces
     private BigDecimal unitPrice;
@@ -163,6 +163,10 @@ public class Consignment {
         } else {
             return amount;
         }
+    }
+
+    public boolean isEqualsInVendorCode(Consignment consignment){
+        return this.vendorCode.equals(consignment.getVendorCode());
     }
 
     public boolean getAgeRestricted() {
