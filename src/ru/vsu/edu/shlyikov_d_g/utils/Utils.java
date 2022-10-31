@@ -1,10 +1,6 @@
-package ru.vsu.edu.shlyikov_d_g;
+package ru.vsu.edu.shlyikov_d_g.utils;
 
-import ru.vsu.edu.shlyikov_d_g.attributes.Amounts;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
-import ru.vsu.edu.shlyikov_d_g.products.units.PurchaseUnit;
-import ru.vsu.edu.shlyikov_d_g.products.units.TransferUnit;
-import ru.vsu.edu.shlyikov_d_g.products.units.Unit;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

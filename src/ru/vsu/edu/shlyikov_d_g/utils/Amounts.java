@@ -1,4 +1,4 @@
-package ru.vsu.edu.shlyikov_d_g.attributes;
+package ru.vsu.edu.shlyikov_d_g.utils;
 
 import java.math.BigDecimal;
 

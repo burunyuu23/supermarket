@@ -1,21 +1,37 @@
 package ru.vsu.edu.shlyikov_d_g.products.units;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PurchaseUnit extends Unit{
-    public PurchaseUnit(int numSupplier, int numConsignment, BigDecimal amount) {
-        super(numSupplier, numConsignment, amount);
+    // "\\w+[\\.\\w+]*"
+    private Integer numSupplier = 0;
+    private Integer numConsignment = 0;
+
+    public PurchaseUnit(String pattern) {
+        super(pattern);
     }
 
-    public PurchaseUnit(int numSupplier, int numConsignment, double amount) {
-        super(numSupplier, numConsignment, amount);
+    @Override
+    public void setNums(List<Integer> allIntegers){
+
+    }
+
+    // TODO как объединить их?????????????????????????????????
+    public static List<PurchaseUnit> toPurchaseUnitList(List<Unit> uList){
+        List<PurchaseUnit> puList = new ArrayList<>();
+        for (Unit u : uList) {
+            puList.add((PurchaseUnit) u);
+        }
+        return puList;
     }
 
     public int getNumSupplier() {
-        return getNum1();
+        return numSupplier;
     }
 
     public int getNumConsignment() {
-        return super.getNum2();
+        return numConsignment;
     }
 }

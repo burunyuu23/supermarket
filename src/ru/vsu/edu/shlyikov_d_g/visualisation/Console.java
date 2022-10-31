@@ -1,12 +1,10 @@
 package ru.vsu.edu.shlyikov_d_g.visualisation;
 
-import ru.vsu.edu.shlyikov_d_g.Utils;
-import ru.vsu.edu.shlyikov_d_g.attributes.Amounts;
+import ru.vsu.edu.shlyikov_d_g.utils.Utils;
+import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
-import ru.vsu.edu.shlyikov_d_g.products.units.PurchaseUnit;
-import ru.vsu.edu.shlyikov_d_g.products.units.TransferUnit;
 import ru.vsu.edu.shlyikov_d_g.products.units.Unit;
 import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
@@ -161,8 +159,8 @@ public class Console implements GameVisualise {
     }
 
     @Override
-    public void showRoom(Room room, String roomName) {
-        System.out.printf("%s:\n", roomName);
+    public void showRoom(Room room) {
+        System.out.printf("%s:\n", room.getRoomName());
         Amounts amounts = new Amounts(BigDecimal.valueOf(0), BigDecimal.valueOf(0));
         int i = 1;
         for (String key : room.getElements().keySet()) {
@@ -201,23 +199,13 @@ public class Console implements GameVisualise {
     }
 
     @Override
-    public List<PurchaseUnit> getFromRoomPU(String operationName, String pattern) {
-        List<PurchaseUnit> list = new ArrayList<>();
+    public List<Unit> getFromRoom(String operationName, String pattern) {
+        List<Unit> list = new ArrayList<>();
         for (String s:circle(operationName, pattern)) {
-            PurchaseUnit u = new PurchaseUnit(0, 0, 0);
-            u.regexUnit(s, "\\w+[\\.\\w+]*");
-            list.add(u);
-        }
-        return list;
-    }
-
-    @Override
-    public List<TransferUnit> getFromRoomTU(String operationName, String pattern) {
-        List<TransferUnit> list = new ArrayList<>();
-        for (String s:circle(operationName, pattern)) {
-            TransferUnit u = new TransferUnit(0, 0, 0);
-            u.regexUnit(s, "\\w+[\\.\\w+]*");
-            list.add(u);
+            // TODO
+//            Unit u = new Unit(0, 0, 0);
+//            u.regexUnit(s, "\\w+[\\.\\w+]*");
+//            list.add(u);
         }
         return list;
     }

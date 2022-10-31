@@ -1,11 +1,9 @@
 package ru.vsu.edu.shlyikov_d_g.visualisation;
 
-import ru.vsu.edu.shlyikov_d_g.attributes.Amounts;
+import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
-import ru.vsu.edu.shlyikov_d_g.products.units.PurchaseUnit;
-import ru.vsu.edu.shlyikov_d_g.products.units.TransferUnit;
 import ru.vsu.edu.shlyikov_d_g.products.units.Unit;
 import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
@@ -81,7 +79,7 @@ public class Panel implements GameVisualise{
     }
 
     @Override
-    public void showRoom(Room room, String roomName) {
+    public void showRoom(Room room) {
 
     }
 
@@ -96,12 +94,7 @@ public class Panel implements GameVisualise{
     }
 
     @Override
-    public List<PurchaseUnit> getFromRoomPU(String operationName, String pattern) {
-        return null;
-    }
-
-    @Override
-    public List<TransferUnit> getFromRoomTU(String operationName, String pattern) {
+    public List<Unit> getFromRoom(String operationName, String pattern) {
         return null;
     }
 }

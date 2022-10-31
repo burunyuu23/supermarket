@@ -16,73 +16,73 @@ public class Products {
     //    boolean should_be_in_the_fridge
 
     public Products(){
-        a = new Consignment("FRU-APP-CHA",
+        a = new Consignment.ConsignmentBuilder("FRU-APP-CHA",
                 "Яблоко 'Чемпион'", "кг",116.99,
-                6,false,false);
+                6,false,false).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("FRU-APP-SEA",
+        a = new Consignment.ConsignmentBuilder("FRU-APP-SEA",
                 "Яблоко 'Сезонные'", "кг",74.99,
-                6,false,false);
+                6,false,false).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("FRU-APP-GOL",
+        a = new Consignment.ConsignmentBuilder("FRU-APP-GOL",
                 "Яблоко 'Гольден'", "кг",116.99,
-                6,false,false);
+                6,false,false).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("FRU-APP-GRA",
+        a = new Consignment.ConsignmentBuilder("FRU-APP-GRA",
                 "Яблоко 'Гренни Смит'", "кг",99.99,
-                6,false,false);
+                6,false,false).build();
         product_range.put(a.getVendorCode(), a);
 
-        a = new Consignment("FRU-BAN-WEI",
+        a = new Consignment.ConsignmentBuilder("FRU-BAN-WEI",
                 "Бананы 'Весовые'", "кг",61.99,
-                3,false,false);
+                3,false,false).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("FRU-BAN-GRE",
+        a = new Consignment.ConsignmentBuilder("FRU-BAN-GRE",
                 "Бананы 'Зелёные'", "кг",74.99,
-                3,false,false);
+                3,false,false).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("FRU-BAN-RED",
+        a = new Consignment.ConsignmentBuilder("FRU-BAN-RED",
                 "Бананы 'Красные'", "кг",87.99,
-                3,false,false);
+                3,false,false).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("FRU-BAN-MIN",
+        a = new Consignment.ConsignmentBuilder("FRU-BAN-MIN",
                 "Бананы 'Мини'", "кг",141.99,
-                3,false,false);
+                3,false,false).build();
         product_range.put(a.getVendorCode(), a);
 
 
-        a = new Consignment("MIL-MIL-PRO",
+        a = new Consignment.ConsignmentBuilder("MIL-MIL-PRO",
                 "Молоко 'Простоквашино' 970мл 1.5%", "шт",91.99,
-                2,false,true);
+                2,false,true).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("MIL-MIL-DOM",
+        a = new Consignment.ConsignmentBuilder("MIL-MIL-DOM",
                 "Молоко 'Домик в деревне' 950мл 3.2%", "шт",70.99,
-                2,false,true);
+                2,false,true).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("MIL-MIL-ECO",
+        a = new Consignment.ConsignmentBuilder("MIL-MIL-ECO",
                 "Молоко 'ЭкоНива' 1л 3.2%", "шт",68.99,
-                2,false,true);
+                2,false,true).build();
         product_range.put(a.getVendorCode(), a);
 
-        a = new Consignment("MIL-CHE-GAU",
+        a = new Consignment.ConsignmentBuilder("MIL-CHE-GAU",
                 "Сыр 'Гауда'", "кг",479.99,
-                4,false,true);
+                4,false,true).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("MIL-CHE-MOZ",
+        a = new Consignment.ConsignmentBuilder("MIL-CHE-MOZ",
                 "Сыр 'Моцарелла'", "кг",674.99,
-                4,false,true);
+                4,false,true).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("MIL-CHE-MAA",
+        a = new Consignment.ConsignmentBuilder("MIL-CHE-MAA",
                 "Сыр 'Маасдам'", "кг",819.99,
-                4,false,true);
+                4,false,true).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("MIL-CHE-SUL",
+        a = new Consignment.ConsignmentBuilder("MIL-CHE-SUL",
                 "Сыр 'Сулугуни'", "кг",659.99,
-                4,false,true);
+                4,false,true).build();
         product_range.put(a.getVendorCode(), a);
-        a = new Consignment("MIL-CHE-CHE",
+        a = new Consignment.ConsignmentBuilder("MIL-CHE-CHE",
                 "Сыр 'Чеддер'", "кг",749.99,
-                4,false,true);
+                4,false,true).build();
         product_range.put(a.getVendorCode(), a);
     }
 

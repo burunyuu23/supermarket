@@ -1,7 +1,5 @@
 package ru.vsu.edu.shlyikov_d_g.products.units;
 
-import ru.vsu.edu.shlyikov_d_g.Utils;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,44 +7,25 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class Unit {
-    private Integer num1;
-    private Integer num2;
-    private BigDecimal amount;
+    // TODO перенести в классы PU&TU
+//    private Integer num1;
+//    private Integer num2;
+    private BigDecimal amount = new BigDecimal(0);
+    private final String pattern;
 
-    public Unit(int num1, int num2, BigDecimal amount) {
-        this.num1 = num1;
-        this.num2 = num2;
-        this.amount = amount;
+    protected Unit(String pattern) {
+        this.pattern = pattern;
     }
 
-    public Unit(int num1, int num2, double amount) {
-        this.num1 = num1;
-        this.num2 = num2;
-        this.amount = BigDecimal.valueOf(amount);
-    }
+    protected abstract void setNums(List<Integer> allIntegers);
 
-    @Override
-    public String toString() {
-        return "Unit{" +
-                "num1=" + num1 +
-                ", num2=" + num2 +
-                ", amount=" + amount +
-                '}';
-    }
-
-    public int getNum1(){
-        return num1;
-    }
-
-    public int getNum2(){
-        return num2;
-    }
-
-    public BigDecimal getAmount() {
+    public BigDecimal getAmount(){
         return amount;
     }
 
-    public void regexUnit(String str, String pattern) {
+    public Unit fromString(String str) {
+        // TODO getPattern()
+
         List<String> allMatches = new ArrayList<>();
         List<Integer> allIntegers = new ArrayList<>();
         BigDecimal amount = new BigDecimal(0);
@@ -66,17 +45,12 @@ public abstract class Unit {
             }
         }
 
-        if (allIntegers.size() == 1) {
-            num1 = -1;
-            num2 = allIntegers.get(0);
-        }
-        else{
-            num1 = allIntegers.get(0);
-            num2 = allIntegers.get(1);
-        }
+        // TODO паттерн метод
+
+        setNums(allIntegers);
 
         this.amount = amount;
+
+        return this;
     }
-
-
 }

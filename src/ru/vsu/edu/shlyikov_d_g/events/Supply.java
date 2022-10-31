@@ -1,7 +1,8 @@
 package ru.vsu.edu.shlyikov_d_g.events;
 
-import ru.vsu.edu.shlyikov_d_g.Utils;
-import ru.vsu.edu.shlyikov_d_g.attributes.Amounts;
+import ru.vsu.edu.shlyikov_d_g.products.units.Unit;
+import ru.vsu.edu.shlyikov_d_g.utils.Utils;
+import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
@@ -18,14 +19,14 @@ public class Supply {
     private BigDecimal cost;
     private Amounts amounts;
     private Storage storage;
-    private MoneyScore ms;
+    private MoneyScore moneyScore;
     private int supplierQuantity;
 
     private GameVisualise visualiser;
 
-    public Supply(GameVisualise visualiser, MoneyScore ms, Storage storage, int supplierQuantity){
+    public Supply(GameVisualise visualiser, MoneyScore moneyScore, Storage storage, int supplierQuantity){
         this.visualiser = visualiser;
-        this.ms = ms;
+        this.moneyScore = moneyScore;
         this.storage = storage;
         this.supplierQuantity = supplierQuantity;
     }
@@ -40,12 +41,14 @@ public class Supply {
         }
     }
 
-    public List<Consignment> supply(){
+    public List<Consignment> getElements(){
+        return consignmentList;
+    }
+
+    public void supply(){
         reset();
         visualiser.supplyStart();
         process();
-
-        return consignmentList;
     }
 
     private void process(){
@@ -77,14 +80,14 @@ public class Supply {
         while (true);
     }
 
-    //  [3-1-1020,2-3-49,2-3-500,1-2-10,2-3-500]\
+    //  [3-1-1020,2-3-49,2-3-500,1-2-10,2-3-500]
     private void add(){
         for (String supplyInput: visualiser.getSupply()) { // заменить
 
-            PurchaseUnit purchaseUnit = new PurchaseUnit(0, 0, BigDecimal.valueOf(0));
-            purchaseUnit.regexUnit(supplyInput, "\\w+[\\.\\w+]*");
+            Unit purchaseUnit = new PurchaseUnit("\\w+[\\.\\w+]*");
+            PurchaseUnit pu = (PurchaseUnit) purchaseUnit.fromString(supplyInput);
 
-            Consignment consignmentFromList = supplierList.get(purchaseUnit.getNumSupplier() - 1).getBasket().get(purchaseUnit.getNumConsignment() - 1);
+            Consignment consignmentFromList = supplierList.get(pu.getNumSupplier() - 1).getBasket().get(pu.getNumConsignment() - 1);
             Consignment consignmentClone = new Consignment(consignmentFromList);
 
             boolean consignmentEqualsPurchaseUnit = false;
@@ -93,17 +96,17 @@ public class Supply {
 
                 if (consignment.isEqualsInVendorCode(consignmentClone)){
 
-                    BigDecimal minusAmount = consignmentFromList.minusAmount(purchaseUnit.getAmount());
+                    BigDecimal minusAmount = consignmentFromList.minusAmount(pu.getAmount());
                     consignment.plusAmount(minusAmount);
                     refreshEvent(minusAmount, consignment);
 
                     consignmentEqualsPurchaseUnit = true;
-                    break;
+                    break; // потому что совпадений либо 0, либо 1
                 }
             }
 
             if (!consignmentEqualsPurchaseUnit) {
-                BigDecimal minusAmount = consignmentFromList.minusAmount(purchaseUnit.getAmount());
+                BigDecimal minusAmount = consignmentFromList.minusAmount(pu.getAmount());
                 if (minusAmount.compareTo(BigDecimal.valueOf(0)) != 0) {
                     consignmentClone.setAmount(minusAmount);
                     refreshEvent(minusAmount, consignmentClone);
@@ -127,7 +130,7 @@ public class Supply {
 
         visualiser.showConsignments(consignmentList);
 
-        List<PurchaseUnit> puList = new ArrayList<>(visualiser.getFromRoomPU("удалить", "\\w+-\\w+[\\.\\w+]*"));
+        List<PurchaseUnit> puList = PurchaseUnit.toPurchaseUnitList(visualiser.getFromRoom("удалить", "\\w+-\\w+[\\.\\w+]*"));
 
         puList.sort(Comparator.comparing(PurchaseUnit::getNumConsignment).reversed());
 
@@ -146,11 +149,11 @@ public class Supply {
 
     private void showInfo(){
 
-        visualiser.showInfoGeneral(ms, cost, amounts, storage);
+        visualiser.showInfoGeneral(moneyScore, cost, amounts, storage);
 
-        while (cost.compareTo(ms.getMoney()) > 0 ||
+        while (cost.compareTo(moneyScore.getMoney()) > 0 ||
                 amounts.getNonFreeze().compareTo(storage.getCapacity()) > 0 || amounts.getFreeze().compareTo(storage.getFridgeCapacity()) > 0){
-            visualiser.showInfoCost(ms, cost);
+            visualiser.showInfoCost(moneyScore, cost);
             visualiser.showInfoAmount(amounts, storage, "на складе",
                     amounts.getNonFreeze().compareTo(storage.getCapacity()) > 0,
                     amounts.getFreeze().compareTo(storage.getFridgeCapacity()) > 0);

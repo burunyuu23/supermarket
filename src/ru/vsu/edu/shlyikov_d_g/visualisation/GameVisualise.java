@@ -1,11 +1,9 @@
 package ru.vsu.edu.shlyikov_d_g.visualisation;
 
-import ru.vsu.edu.shlyikov_d_g.attributes.Amounts;
+import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
-import ru.vsu.edu.shlyikov_d_g.products.units.PurchaseUnit;
-import ru.vsu.edu.shlyikov_d_g.products.units.TransferUnit;
 import ru.vsu.edu.shlyikov_d_g.products.units.Unit;
 import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
@@ -41,15 +39,11 @@ public interface GameVisualise {
 
     void remove();
 
-    void showRoom(Room room, String roomName);
+    void showRoom(Room room);
 
     void askRoom(Room room, String roomName);
 
     List<String> getSupply();
 
-
-    List<PurchaseUnit> getFromRoomPU(String operationName, String pattern);
-
-    List<TransferUnit> getFromRoomTU(String operationName, String pattern);
-
+    List<Unit> getFromRoom(String operationName, String pattern);
 }

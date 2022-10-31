@@ -1,18 +1,17 @@
 package ru.vsu.edu.shlyikov_d_g.rooms;
 
-import jdk.jshell.execution.Util;
-import ru.vsu.edu.shlyikov_d_g.Utils;
+import ru.vsu.edu.shlyikov_d_g.utils.Utils;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 public abstract class Room {
+    private final String roomName;
     private final BigDecimal capacity;
     private final BigDecimal fridgeCapacity; // холодильник
 
     private Map<String, Map<Integer, Consignment>> elements = new HashMap<>();
-    private String roomName;
 
     public Room(int capacity, int fridgeCapacity, String roomName){
         this.capacity = BigDecimal.valueOf(capacity);

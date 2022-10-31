@@ -1,20 +1,17 @@
 package ru.vsu.edu.shlyikov_d_g.main;
 
-import ru.vsu.edu.shlyikov_d_g.DatePrinter;
+import ru.vsu.edu.shlyikov_d_g.utils.DatePrinter;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.events.Supply;
 import ru.vsu.edu.shlyikov_d_g.events.TransferGoods;
 import ru.vsu.edu.shlyikov_d_g.products.Products;
-import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 import ru.vsu.edu.shlyikov_d_g.rooms.Store;
 import ru.vsu.edu.shlyikov_d_g.visualisation.Console;
 import ru.vsu.edu.shlyikov_d_g.visualisation.GameVisualise;
 import ru.vsu.edu.shlyikov_d_g.visualisation.Panel;
 
-import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
@@ -23,8 +20,8 @@ public class Game {
 
     private MoneyScore money;
     private static final Products products = new Products();
-    private DatePrinter date;
-    private int day_passed;
+    private DatePrinter datePrinter;
+    private int dayPassed;
     private Storage storage;
     private Store store;
 
@@ -40,7 +37,7 @@ public class Game {
     }
 
     public Game(){
-        date = new DatePrinter();
+        datePrinter = new DatePrinter();
         money = new MoneyScore(500000);
         storage = new Storage(1000, 200, "Склад");
         store = new Store(500, 100, "Торговый зал");
@@ -68,18 +65,19 @@ public class Game {
     public void start() {
         chooseGameSettings();
 
-        day_passed = 0;
+        dayPassed = 0;
         gameVisualise.helpStart();
 
         supply = new Supply(gameVisualise, money, storage, 3);
-        storage.addElements(supply.supply());
-        transferGoods.askStorage();
 
-//        while (true) {
-//
-//
-//
-//            day_passed++;
-//        }
+        while (true) {
+            supply.supply();
+            storage.addElements(supply.getElements());
+            transferGoods.askStorage();
+
+
+
+            dayPassed++;
+        }
     }
 }
