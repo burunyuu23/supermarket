@@ -11,24 +11,28 @@ public class Amounts {
         this.nonFreeze = nonFreeze;
     }
 
-    public BigDecimal plus(BigDecimal a, Boolean b){
-        if (b){
-            freeze = freeze.add(a);
-            return freeze;
-        }
-        else{
-            nonFreeze = nonFreeze.add(a);
-            return nonFreeze;
-        }
+    public Amounts(int freeze, int nonFreeze) {
+        this.freeze = BigDecimal.valueOf(freeze);
+        this.nonFreeze = BigDecimal.valueOf(nonFreeze);
     }
 
-    public BigDecimal plusFreeze(BigDecimal a){
-        freeze = freeze.add(a);
+    public BigDecimal plus(BigDecimal plusAmount, Boolean isFreeze){
+        if (isFreeze) return plusFreeze(plusAmount);
+        return plusNonFreeze(plusAmount);
+    }
+
+    public BigDecimal minus(BigDecimal minusAmount, Boolean isFreeze){
+        if (isFreeze) return plusFreeze(minusAmount.multiply(BigDecimal.valueOf(-1)));
+        return plusNonFreeze(minusAmount.multiply(BigDecimal.valueOf(-1)));
+    }
+
+    public BigDecimal plusFreeze(BigDecimal plusAmount){
+        freeze = freeze.add(plusAmount);
         return freeze;
     }
 
-    public BigDecimal plusNonFreeze(BigDecimal a){
-        nonFreeze = nonFreeze.add(a);
+    public BigDecimal plusNonFreeze(BigDecimal plusAmount){
+        nonFreeze = nonFreeze.add(plusAmount);
         return nonFreeze;
     }
 

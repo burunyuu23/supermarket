@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransferUnit extends Unit {
-
+    // ask: "\\w+-\\w+-\\w+[\\.\\w+]*"
     private Integer numConsignment;
     private Integer numBatch;
 
@@ -13,12 +13,26 @@ public class TransferUnit extends Unit {
         super(pattern);
     }
 
-    public static List<TransferUnit> toTransferUnitList(List<Unit> uList){
-//        uList.stream().map(); TODO
+    @Override
+    public String toString() {
+        return "TransferUnit{" +
+                "numConsignment=" + numConsignment +
+                ", numBatch=" + numBatch +
+                ", amout=" + getAmount() +'}';
+    }
+
+    @Override
+    public void setNums(List<Integer> allIntegers){
+            numConsignment = allIntegers.get(0);
+            numBatch = allIntegers.get(1);
+    }
+
+
+    public static List<TransferUnit> toTransferUnitList(List<String> uList){
         List<TransferUnit> tuList = new ArrayList<>();
-        for (Unit u : uList) {
-            // TransferUnit from Unit
-            tuList.add((TransferUnit) u);
+        for (String u : uList) {
+            TransferUnit tu = new TransferUnit("\\w+[\\.\\w+]*");
+            tuList.add((TransferUnit) tu.fromString(u));
         }
         return tuList;
     }
@@ -29,10 +43,5 @@ public class TransferUnit extends Unit {
 
     public int getNumBatch() {
         return numBatch;
-    }
-
-    @Override
-    protected void setNums(List<Integer> allIntegers) {
-
     }
 }

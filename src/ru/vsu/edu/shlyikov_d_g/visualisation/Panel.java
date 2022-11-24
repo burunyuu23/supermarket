@@ -1,5 +1,8 @@
 package ru.vsu.edu.shlyikov_d_g.visualisation;
 
+import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
+import ru.vsu.edu.shlyikov_d_g.products.Cheque;
+import ru.vsu.edu.shlyikov_d_g.rooms.Store;
 import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
@@ -79,6 +82,11 @@ public class Panel implements GameVisualise{
     }
 
     @Override
+    public void removeStore() {
+
+    }
+
+    @Override
     public void showRoom(Room room) {
 
     }
@@ -89,12 +97,22 @@ public class Panel implements GameVisualise{
     }
 
     @Override
-    public List<String> getSupply() {
+    public void helpPurchase() {
+
+    }
+
+    @Override
+    public void showCheque(Cheque cheque, BigDecimal price) {
+
+    }
+
+    @Override
+    public BigDecimal purchase(Consignment consignment, Store store)  {
         return null;
     }
 
     @Override
-    public List<Unit> getFromRoom(String operationName, String pattern) {
+    public List<String> getFromRoom(String operationName, Unit u) {
         return null;
     }
 }

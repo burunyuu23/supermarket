@@ -1,5 +1,9 @@
 package ru.vsu.edu.shlyikov_d_g.visualisation;
 
+import org.w3c.dom.ls.LSOutput;
+import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
+import ru.vsu.edu.shlyikov_d_g.products.Cheque;
+import ru.vsu.edu.shlyikov_d_g.rooms.Store;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
 import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
@@ -10,7 +14,6 @@ import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -69,14 +72,14 @@ public class Console implements GameVisualise {
         System.out.printf("Общая сумма закупки составила: %.2f руб.\n", cost);
         System.out.printf("У вас: %.2f руб.\n", ms.getMoney());
         System.out.printf("Обычные продукты: %.2f/%.2f\n", amounts.getNonFreeze(), storage.getCapacity());
-        System.out.printf("Продукты, требующие хранения в холодильниках: %.2f/%.2f\n", amounts.getFreeze(), storage.getFridgeCapacity());
+        System.out.printf("Продукты, требующие хранения в холодильниках: %.2f/%.2f\n\n", amounts.getFreeze(), storage.getFridgeCapacity());
 
     }
 
     @Override
     public void showInfoCost(MoneyScore ms, BigDecimal cost){
         System.out.println("У вас недостаточно денег для закупки этих товаров!");
-        System.err.printf("%.2f/%.2f\n", cost, ms.getMoney());
+        System.out.printf("%.2f/%.2f\n\n", cost, ms.getMoney());
     }
 
     @Override
@@ -85,20 +88,6 @@ public class Console implements GameVisualise {
         String freeze = String.format("Продукты, требующие хранения в холодильниках: %.2f/%.2f\n", amounts.getFreeze(), room.getFridgeCapacity());
         if (amountedNonFreeze || amountedFreeze){
             System.out.printf("У вас недостаточно места %s для размещения этих товаров!\n", roomName);
-            if (amountedNonFreeze && amountedFreeze){
-                System.err.print(nonFreze);
-                System.err.println(freeze);
-            }
-            else if (amountedNonFreeze){
-                System.err.print(nonFreze);
-                System.out.println(freeze);
-            }
-            else {
-                System.err.print(freeze);
-                System.out.println(nonFreze);
-            }
-        }
-        else{
             System.out.print(nonFreze);
             System.out.println(freeze);
         }
@@ -116,13 +105,14 @@ public class Console implements GameVisualise {
                 i++;
             }
         }
+        System.out.println();
     }
 
     @Override
     public boolean continueEvent(String name) {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.printf("Продолжить %s?\n", name);
+            System.out.printf("%s?\n", name);
             String str = scanner.nextLine().toLowerCase(Locale.ROOT);
 
             if (str.equals("нет")) {
@@ -145,7 +135,7 @@ public class Console implements GameVisualise {
 
     @Override
     public void consignmentIsOver(Consignment c){
-        System.out.println("Товар \"" + c.getProduct_name() + "\" закончился!");
+        System.out.println("Товар \"" + c.getProductName() + "\" закончился!");
     }
 
     @Override
@@ -159,20 +149,31 @@ public class Console implements GameVisualise {
     }
 
     @Override
+    public void removeStore(){
+        System.out.println("""
+                Удалите товары из списка, например, введя их в формате [<позиция>-<партия>-<количество>, <позиция>-<партия>-<количество>]
+                Например: [3-1-10,2-3-200,1-5-1]
+                При этом удалятся товары под номерами 3-1 10 ед.,2-3 200 ед. и 1-5 1 ед.
+                Если количество удаляемого > количество в корзинке, товар удалится из корзины полностью.
+                """);
+    }
+
+    @Override
     public void showRoom(Room room) {
         System.out.printf("%s:\n", room.getRoomName());
         Amounts amounts = new Amounts(BigDecimal.valueOf(0), BigDecimal.valueOf(0));
-        int i = 1;
+        int i = 0;
         for (String key : room.getElements().keySet()) {
             for (Integer days : room.getElements().get(key).keySet()) {
                 Consignment a = room.getElements().get(key).get(days);
+                if (a.getBatchNumber() == 0) ++i;
+                else i = a.getBatchNumber();
                 System.out.println(i + ". " + a.toStringStorage());
                 amounts.plus(a.getAmount(), a.getShouldBeInTheFridge());
-                i++;
             }
         }
 
-        System.out.printf("Количество обычных товаров: %.2f/%.2f\n\n", amounts.getNonFreeze(), room.getCapacity());
+        System.out.printf("Количество обычных товаров: %.2f/%.2f\n", amounts.getNonFreeze(), room.getCapacity());
         System.out.printf("Количество товаров, требующих хранение в холодильнике: %.2f/%.2f\n\n", amounts.getFreeze(), room.getFridgeCapacity());
     }
 
@@ -186,27 +187,93 @@ public class Console implements GameVisualise {
     }
 
     @Override
-    public List<String> getSupply(){
+    public void helpPurchase() {
+        System.out.printf("""
+                Сейчас на ленте стоят продукты случайного покупателя. 
+                Вы должны пробить каждый товар либо взвесить его в зависимости от его меры.
+                """);
+    }
+
+    @Override
+    public void showCheque(Cheque cheque, BigDecimal price) {
+        System.out.println(cheque);
+        System.out.println("Выручка: " + price);
+    }
+
+    @Override
+    public BigDecimal purchase(Consignment consignment, Store store) {
         Scanner scanner = new Scanner(System.in);
-        return Utils.regexStr(scanner.nextLine(),"\\w+-\\w+-\\w+[\\.\\w+]*");
+        System.out.println(consignment.toStringPurchase(false));
+        if (consignment.getMeasure().equals("кг")) {
+            System.out.println("""
+                    1. Взвесить
+                    """);
+            while (true) {
+                String str = scanner.nextLine();
+
+                if (str.equals("1")) {
+                    System.out.printf("Продукт весит %s %s\n", consignment.getAmount(), consignment.getMeasure());
+
+                    while (true) {
+                        System.out.println("Введите артикул этого продукта:");
+                        String key = scanner.nextLine();
+                        if (!consignment.getVendorCode().equals(key)) {
+                            System.out.println("Это не тот товар! ГАЛЯ ВОЗВРАТ!!!");
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    break;
+                } else {
+                    System.out.println("Такой функции нет. Можете повторить?");
+                }
+            }
+        }
+        else{
+            System.out.println("""
+                    1. Пробить штрих-код
+                    2. Ввести вручную""");
+
+            while (true) {
+                String str = scanner.nextLine();
+
+                if (str.equals("1")) {
+                    System.out.println("пи-и-и-п");
+                    break;
+                } else if (str.equals("2")) {
+                    while (true) {
+                        System.out.println("Введите артикул этого продукта:");
+                        String key = scanner.nextLine();
+                        if (!consignment.getVendorCode().equals(key)) {
+                            System.out.println("Это не тот товар! ГАЛЯ ВОЗВРАТ!!!");
+                        }
+                        else{
+                            break;
+                        }
+                    }
+                    break;
+                } else {
+                    System.out.println("Такой функции нет. Можете повторить?");
+                }
+            }
+        }
+        System.out.println(consignment.toStringPurchase(true));
+        System.out.println();
+
+        return consignment.getUnitPrice().multiply(consignment.getAmount());
     }
 
     private List<String> circle(String operationName, String pattern) {
         Scanner scanner = new Scanner(System.in);
-        System.out.printf("Введите что %s:\n", operationName);
+        System.out.printf("Введите что %s в формате %s:\n", operationName, pattern);
         String str = scanner.nextLine();
         return Utils.regexStr(str, pattern);
     }
 
     @Override
-    public List<Unit> getFromRoom(String operationName, String pattern) {
-        List<Unit> list = new ArrayList<>();
-        for (String s:circle(operationName, pattern)) {
-            // TODO
-//            Unit u = new Unit(0, 0, 0);
-//            u.regexUnit(s, "\\w+[\\.\\w+]*");
-//            list.add(u);
-        }
-        return list;
+    public List<String> getFromRoom(String operationName, Unit u) {
+        String pattern = u.getPattern();
+        return circle(operationName, pattern);
     }
 }

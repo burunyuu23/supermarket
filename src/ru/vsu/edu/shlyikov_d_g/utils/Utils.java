@@ -19,6 +19,7 @@ public final class Utils {
         while (m.find()) {
             allMatches.add(m.group());
         }
+        java.awt.List awt;
         return allMatches;
     }
 
@@ -39,8 +40,7 @@ public final class Utils {
     public static int findMinButcherNumber(Map<Integer, Consignment> map){
         List<Consignment> list = map.values().stream().toList();
         if (list.size() > 0) {
-            List<Consignment> listTemp = list.subList(0, list.size() - 1);
-            listTemp.sort(Comparator.comparing(Consignment::getBatchNumber));
+            List<Consignment> listTemp = list.subList(0, list.size());
             for (int i = 0; i < listTemp.size() - 1; i++) {
                 Consignment c = listTemp.get(i);
                 Consignment cNext = listTemp.get(i + 1);

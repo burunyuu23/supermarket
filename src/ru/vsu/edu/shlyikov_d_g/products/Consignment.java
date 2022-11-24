@@ -42,41 +42,35 @@ public class Consignment {
         shouldBeInTheFridge = consignmentBuilder.shouldBeInTheFridge;
     }
 
-    // obj clone
-    public Consignment(Consignment c) {
-        this.vendorCode = c.getVendorCode();
-        this.productName = c.getProduct_name();
-        this.amount = c.getAmount();
-        this.measure = c.getMeasure();
-        this.unitPrice = c.getUnitPrice();
-        this.expirationDays = c.getExpirationDays();
-        this.ageRestricted = c.getAgeRestricted();
-        this.shouldBeInTheFridge = c.getShouldBeInTheFridge();
+    // TODO метод возвращающий клон
+    public Consignment clone(){
+        Consignment conNew = new Consignment(new ConsignmentBuilder(
+                this.vendorCode, this.getProductName(), this.getMeasure(),
+                this.unitPrice, this.expirationDays, this.ageRestricted,
+                this.shouldBeInTheFridge
+        ));
+        if (this.getAmount() != null){
+            conNew.setAmount(this.getAmount());
+        }
+        conNew.setBatchNumber(this.getBatchNumber());
+        return conNew;
     }
 
-    // Consignment c = new Consignment(cOld)
-
-    // TODO метод возвращающий клон
-//    public Consignment clone(){
-//        Consignment c = new Consignment();
-//        return null;
-//    }
-
     public static class ConsignmentBuilder{
-        private String vendorCode;
+        private final String vendorCode;
         private Image photo;
 
         // this all must be received from vendor code
-        private String productName;
+        private final String productName;
         private BigDecimal amount; // optional
-        private String measure; // in kilograms/grams or pieces
-        private BigDecimal unitPrice;
+        private final String measure; // in kilograms/grams or pieces
+        private final BigDecimal unitPrice;
         private BigDecimal currPrice; // optional
         private int discount; // optional
         private int batchNumber; // optional
         private int expirationDays;
-        private boolean ageRestricted;
-        private boolean shouldBeInTheFridge;
+        private final boolean ageRestricted;
+        private final boolean shouldBeInTheFridge;
 
         public ConsignmentBuilder(String vendorCode, String product_name, String measure, double unitPrice,
                                int expirationDays, boolean ageRestricted,
@@ -85,6 +79,18 @@ public class Consignment {
             this.productName = product_name;
             this.measure = measure;
             this.unitPrice = BigDecimal.valueOf(unitPrice);
+            this.expirationDays = expirationDays;
+            this.ageRestricted = ageRestricted;
+            this.shouldBeInTheFridge = shouldBeInTheFridge;
+        }
+
+        public ConsignmentBuilder(String vendorCode, String product_name, String measure, BigDecimal unitPrice,
+                                  int expirationDays, boolean ageRestricted,
+                                  boolean shouldBeInTheFridge) {
+            this.vendorCode = vendorCode;
+            this.productName = product_name;
+            this.measure = measure;
+            this.unitPrice = unitPrice;
             this.expirationDays = expirationDays;
             this.ageRestricted = ageRestricted;
             this.shouldBeInTheFridge = shouldBeInTheFridge;
@@ -146,7 +152,7 @@ public class Consignment {
         return photo;
     }
 
-    public String getProduct_name() {
+    public String getProductName() {
         return productName;
     }
 
@@ -162,6 +168,10 @@ public class Consignment {
         return unitPrice;
     }
 
+    public BigDecimal getCurrPrice() {
+        return currPrice;
+    }
+
     public int getExpirationDays() {
         return expirationDays;
     }
@@ -170,8 +180,9 @@ public class Consignment {
         this.amount = Utils.round(amount, 2);
     }
 
-    public void plusAmount(BigDecimal amount) {
+    public BigDecimal plusAmount(BigDecimal amount) {
         this.amount = Utils.round(this.amount.add(amount), 2);
+        return this.amount;
     }
 
     public BigDecimal minusAmount(BigDecimal amount) {
@@ -227,24 +238,54 @@ public class Consignment {
         } else {
             return "дней";
         }
-
     }
 
-    private boolean checkKG() {
+    public void nextDay(){
+        this.expirationDays -= 1;
+    }
+
+    public void setExpirationDays(int expirationDays) {
+        this.expirationDays = expirationDays;
+    }
+
+    public boolean checkKG() {
         return this.measure.equals("кг");
     }
 
-    private boolean checkSH() {
+    public boolean checkSH() {
         return this.measure.equals("шт");
     }
 
     private BigDecimal amountRandom() {
         double d = Math.random() * 1000 + 399;
-        return Utils.round(new BigDecimal(d), 2);
+        if (checkSH()){
+            return Utils.round(new BigDecimal((int) d), 2);
+        }
+        else{
+            return Utils.round(new BigDecimal(d), 2);
+        }
     }
 
     public void setAmountRandom() {
         setAmount(amountRandom());
+    }
+
+    @Override
+    public String toString() {
+        return "Consignment{" +
+                "vendorCode='" + vendorCode + '\'' +
+                ", photo=" + photo +
+                ", productName='" + productName + '\'' +
+                ", amount=" + amount +
+                ", measure='" + measure + '\'' +
+                ", unitPrice=" + unitPrice +
+                ", currPrice=" + currPrice +
+                ", discount=" + discount +
+                ", batchNumber=" + batchNumber +
+                ", expirationDays=" + expirationDays +
+                ", ageRestricted=" + ageRestricted +
+                ", shouldBeInTheFridge=" + shouldBeInTheFridge +
+                '}';
     }
 
     // TODO StringBuilder
@@ -275,6 +316,12 @@ public class Consignment {
                 "\nсрок годности: " + expirationDays + " " + rightDays() +
                 (ageRestricted ? ";\nне продаётся лицам младше 18 лет" : "") +
                 (shouldBeInTheFridge ? ";\nдолжен храниться в холодильнике" : "") + ".\n";
+    }
+
+    public String toStringPurchase(boolean bool){
+        return  productName + "; "
+                + (bool ? (
+                "\nколичество: " + amount + measure + ";" + "\nцена: " + unitPrice.multiply(amount) + ";") : "");
     }
 }
 

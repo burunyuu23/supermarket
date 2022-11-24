@@ -22,11 +22,20 @@ public class MoneyScore {
         return money;
     }
 
+    public void setMoney(BigDecimal money) {
+        this.money = money;
+    }
+
     public void spend(BigDecimal spending){
         money = money.add(spending.multiply(BigDecimal.valueOf(-1)));
     }
 
     public void receive(BigDecimal spending){
         money = money.add(spending);
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(money);
     }
 }

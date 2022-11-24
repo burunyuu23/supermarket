@@ -1,5 +1,8 @@
 package ru.vsu.edu.shlyikov_d_g.visualisation;
 
+import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
+import ru.vsu.edu.shlyikov_d_g.products.Cheque;
+import ru.vsu.edu.shlyikov_d_g.rooms.Store;
 import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
@@ -39,11 +42,17 @@ public interface GameVisualise {
 
     void remove();
 
+    void removeStore();
+
     void showRoom(Room room);
 
     void askRoom(Room room, String roomName);
 
-    List<String> getSupply();
+    void helpPurchase(); // TODO в графическом сделать пробивание товара как провести мышкой по штрих-коду товара
 
-    List<Unit> getFromRoom(String operationName, String pattern);
+    void showCheque(Cheque cheque, BigDecimal price);
+
+    BigDecimal purchase(Consignment consignment, Store store);
+
+    List<String> getFromRoom(String operationName, Unit u);
 }

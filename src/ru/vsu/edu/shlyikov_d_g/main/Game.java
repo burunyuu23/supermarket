@@ -1,5 +1,6 @@
 package ru.vsu.edu.shlyikov_d_g.main;
 
+import ru.vsu.edu.shlyikov_d_g.events.Purchase;
 import ru.vsu.edu.shlyikov_d_g.utils.DatePrinter;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.events.Supply;
@@ -11,6 +12,7 @@ import ru.vsu.edu.shlyikov_d_g.visualisation.Console;
 import ru.vsu.edu.shlyikov_d_g.visualisation.GameVisualise;
 import ru.vsu.edu.shlyikov_d_g.visualisation.Panel;
 
+import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -24,17 +26,13 @@ public class Game {
     private int dayPassed;
     private Storage storage;
     private Store store;
-
+    private Purchase purchase;
     private TransferGoods transferGoods;
     private Supply supply;
 //    private Queue<Event> q;
 
     // 20-30% extra charge
     private int extra_charge;
-
-    public static Products getProducts(){
-        return products;
-    }
 
     public Game(){
         datePrinter = new DatePrinter();
@@ -62,21 +60,41 @@ public class Game {
         transferGoods = new TransferGoods(storage, store, gameVisualise);
     }
 
-    public void start() {
+    private void start() {
         chooseGameSettings();
 
         dayPassed = 0;
         gameVisualise.helpStart();
+        purchase = new Purchase(store, gameVisualise);
 
         supply = new Supply(gameVisualise, money, storage, 3);
+    }
+
+    public void play(){
+        start();
 
         while (true) {
-            supply.supply();
+            System.out.printf("День %s начинается!\n\n", dayPassed+1);
+            MoneyScore dayMoney = new MoneyScore(new BigDecimal(0));
+            MoneyScore supplyMoney = new MoneyScore(supply.supply());
+
             storage.addElements(supply.getElements());
             transferGoods.askStorage();
 
+            for (int i = 0; i < 4; i++) {
+                dayMoney.receive(purchase.purchase());
+            }
 
-
+            storage.nextDay();
+            store.nextDay();
+            money.spend(supplyMoney.getMoney());
+            System.out.printf("День %s закончен!\n\nОтчет:\n", dayPassed+1);
+            System.out.println("За сегодня заработано: " + dayMoney);
+            System.out.println("За сегодня потрачено: " + supplyMoney);
+            System.out.println("currMoney= " + money);
+            if (!gameVisualise.continueEvent("Продолжить играть")){
+                break;
+            }
             dayPassed++;
         }
     }
