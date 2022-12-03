@@ -1,6 +1,5 @@
 package ru.vsu.edu.shlyikov_d_g.events;
 
-import ru.vsu.edu.shlyikov_d_g.products.units.PurchaseUnit;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
 import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
@@ -27,19 +26,12 @@ public class TransferGoods {
     public void askStorage() {
         gameVisualise.showRoom(storage);
 
-//        System.out.println("///////////////////////////////////////////////////////////////////////////////");
-//        System.out.println(storage.getElements());
-//        System.out.println(storage.getElements().keySet().stream().toList());
-//        System.out.println("///////////////////////////////////////////////////////////////////////////////");
-
         do {
             List<Consignment> list = new ArrayList<>();
-            List<TransferUnit> tuList = TransferUnit.toTransferUnitList(gameVisualise.getFromRoom("переместить", new TransferUnit("\\w+-\\w+-\\w+[\\.\\w+]*")));
+            List<TransferUnit> tuList = TransferUnit.toTransferUnitList(gameVisualise.getFromRoom("Переместить", new TransferUnit("\\w+-\\w+-\\w+[\\.\\w+]*"), storage));
 
             tuList.sort(Comparator.comparing(TransferUnit::getNumBatch).reversed());
             tuList.sort(Comparator.comparing(TransferUnit::getNumConsignment).reversed());
-
-            System.out.println(tuList);
 
             for (TransferUnit tu : tuList) {
                 int numСonsignment = tu.getNumConsignment() - 1;
@@ -62,11 +54,10 @@ public class TransferGoods {
 
             Amounts amounts = Utils.countAmounts(list);
 
-            boolean nonFreeze = amounts.getNonFreeze().compareTo(store.getCapacity()) > 0;
+            boolean nonFreeze = amounts.getNonFreeze().compareTo(store.getNonFridgeCapacity()) > 0;
             boolean freeze = amounts.getFreeze().compareTo(store.getFridgeCapacity()) > 0;
 
             if (transfer(storage, store, list)){
-                show(amounts, nonFreeze, freeze);
                 continue;
             }
 
@@ -92,7 +83,7 @@ public class TransferGoods {
         Amounts amounts = Utils.countAmounts(list);
 
         amounts.plusFreeze(to.getAmounts().getFreeze());
-        boolean nonFreeze = amounts.getNonFreeze().compareTo(to.getCapacity()) > 0;
+        boolean nonFreeze = amounts.getNonFreeze().compareTo(to.getNonFridgeCapacity()) > 0;
 
         amounts.plusNonFreeze(to.getAmounts().getNonFreeze());
        boolean freeze = amounts.getFreeze().compareTo(to.getFridgeCapacity()) > 0;

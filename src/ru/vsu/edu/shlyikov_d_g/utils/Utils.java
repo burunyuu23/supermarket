@@ -19,7 +19,6 @@ public final class Utils {
         while (m.find()) {
             allMatches.add(m.group());
         }
-        java.awt.List awt;
         return allMatches;
     }
 
@@ -67,6 +66,15 @@ public final class Utils {
             amount = amount.add(c.getAmount());
         }
         return amount;
+    }
+
+    public static BigDecimal countPrice(List<Consignment> list){
+        BigDecimal price = new BigDecimal(0);
+        for (Consignment c : list){
+            price = price.add(c.getAmount().multiply(c.getUnitPrice()));
+        }
+
+        return round(price, 2);
     }
 
     public static BigDecimal countFreezeAmount(List<Consignment> list){

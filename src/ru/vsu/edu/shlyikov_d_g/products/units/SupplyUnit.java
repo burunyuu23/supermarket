@@ -1,10 +1,9 @@
 package ru.vsu.edu.shlyikov_d_g.products.units;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PurchaseUnit extends Unit{
+public class SupplyUnit extends Unit{
     // "\\w+[\\.\\w+]*"
     // add: "\w+-\w+-\w+[\.\w+]*"
     // remove: "\\w+-\\w+[\\.\\w+]*"
@@ -12,7 +11,7 @@ public class PurchaseUnit extends Unit{
     private Integer numSupplier = 0;
     private Integer numConsignment = 0;
 
-    public PurchaseUnit(String pattern) {
+    public SupplyUnit(String pattern) {
         super(pattern);
     }
 
@@ -28,12 +27,11 @@ public class PurchaseUnit extends Unit{
         }
     }
 
-    // TODO как объединить их?????????????????????????????????
-    public static List<PurchaseUnit> toPurchaseUnitList(List<String> uList){
-        List<PurchaseUnit> puList = new ArrayList<>();
+    public static List<SupplyUnit> toSupplyUnitList(List<String> uList){
+        List<SupplyUnit> puList = new ArrayList<>();
         for (String u : uList) {
-            PurchaseUnit pu = new PurchaseUnit("\\w+[\\.\\w+]*");
-            puList.add((PurchaseUnit) pu.fromString(u));
+            SupplyUnit pu = new SupplyUnit("\\w+[\\.\\w+]*");
+            puList.add((SupplyUnit) pu.fromString(u));
         }
         return puList;
     }

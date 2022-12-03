@@ -6,7 +6,7 @@ import ru.vsu.edu.shlyikov_d_g.humans.enums.Genders;
 
 import java.awt.*;
 
-public abstract class Human {
+public abstract class Human { // TODO
     // passport data
     private String name = null;
     private int years = 0;

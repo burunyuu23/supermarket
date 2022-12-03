@@ -21,19 +21,11 @@ public class Customer extends Buyer {
         return money;
     }
 
-    public void setMoney(int money) {
-        this.money = new MoneyScore(money);
-    }
-
     public Customer(){
         setGender();
         setName();
         setYears((int) (Math.random() * 100 + 5));
         money = new MoneyScore();
-    }
-
-    public void setBasket(List<Consignment> basket){
-        this.basket = basket;
     }
 
     public void chooseProducts(Room store) {
@@ -73,14 +65,6 @@ public class Customer extends Buyer {
                     Consignment consignmentToTranslate = consignment.clone();
 
                     BigDecimal minusAmount = consignmentToTranslate.minusAmount(amount);
-//                    if (amount.compareTo(consignment.getAmount()) >= 0) { // TODO повторяется
-//                        store.getElements().get(key).remove(batch);
-//                        if (store.getElements().get(key).size() == 0) {
-//                            store.getElements().remove(key);
-//                        }
-//                    } else {
-//                        consignment.minusAmount(minusAmount);
-//                    }
 
                     consignmentToTranslate.setAmount(minusAmount);
                     basket.add(consignmentToTranslate);

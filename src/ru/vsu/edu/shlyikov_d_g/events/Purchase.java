@@ -33,7 +33,7 @@ public class Purchase {
 
         BigDecimal price = new BigDecimal(0);
         for (Consignment c : customer.getBasket()) {
-            price = price.add(gameVisualise.purchase(c, store)); // TODO добавить скидки
+            price = price.add(gameVisualise.purchase(customer, c, store)); // TODO добавить скидки
         }
 
         Cheque cheque = new Cheque(customer.getBasket());
@@ -42,9 +42,8 @@ public class Purchase {
         store.removeElements(customer.getBasket());
         chequeList.add(cheque);
 
-
         gameVisualise.showCheque(cheque, price);
-        gameVisualise.showRoom(store);
+//        gameVisualise.showRoom(store);
         }
         return cheque.getGeneralAmount();
     }

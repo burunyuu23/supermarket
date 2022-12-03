@@ -10,19 +10,19 @@ import java.util.*;
 public abstract class Room {
     private final String roomName;
     private Amounts amounts = new Amounts(0, 0);
-    private final BigDecimal capacity;
+    private final BigDecimal nonFridgeCapacity;
     private final BigDecimal fridgeCapacity; // холодильник
 
-    private Map<String, Map<Integer, Consignment>> elements = new HashMap<>();
+    private final Map<String, Map<Integer, Consignment>> elements = new HashMap<>();
 
-    public Room(int capacity, int fridgeCapacity, String roomName){
-        this.capacity = BigDecimal.valueOf(capacity);
+    public Room(int nonFridgeCapacity, int fridgeCapacity, String roomName){
+        this.nonFridgeCapacity = BigDecimal.valueOf(nonFridgeCapacity);
         this.fridgeCapacity = BigDecimal.valueOf(fridgeCapacity);
         this.roomName = roomName;
     }
 
-    public Room(double capacity, double fridgeCapacity, String roomName){
-        this.capacity = BigDecimal.valueOf(capacity);
+    public Room(double nonFridgeCapacity, double fridgeCapacity, String roomName){
+        this.nonFridgeCapacity = BigDecimal.valueOf(nonFridgeCapacity);
         this.fridgeCapacity = BigDecimal.valueOf(fridgeCapacity);
         this.roomName = roomName;
     }
@@ -54,8 +54,8 @@ public abstract class Room {
         return Utils.countAmount(consignmentList);
     }
 
-    public BigDecimal getCapacity() {
-        return capacity;
+    public BigDecimal getNonFridgeCapacity() {
+        return nonFridgeCapacity;
     }
 
     public BigDecimal getFridgeCapacity(){

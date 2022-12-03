@@ -1,13 +1,13 @@
 package ru.vsu.edu.shlyikov_d_g.products;
 
+import ru.vsu.edu.shlyikov_d_g.utils.Icon;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
 
-import java.awt.*;
 import java.math.BigDecimal;
 
 public class Consignment {
     private String vendorCode;
-    private Image photo;
+    private Icon photo;
 
     // this all must be received from vendor code
     private String productName;
@@ -58,7 +58,7 @@ public class Consignment {
 
     public static class ConsignmentBuilder{
         private final String vendorCode;
-        private Image photo;
+        private Icon photo;
 
         // this all must be received from vendor code
         private final String productName;
@@ -96,7 +96,7 @@ public class Consignment {
             this.shouldBeInTheFridge = shouldBeInTheFridge;
         }
 
-        public ConsignmentBuilder setImage(Image photo){
+        public ConsignmentBuilder setPhoto(Icon photo){
             this.photo = photo;
             return this;
         }
@@ -148,7 +148,7 @@ public class Consignment {
         this.batchNumber = batchNumber;
     }
 
-    public Image getPhoto() {
+    public Icon getPhoto() {
         return photo;
     }
 

@@ -1,6 +1,5 @@
 package ru.vsu.edu.shlyikov_d_g.visualisation;
 
-import org.w3c.dom.ls.LSOutput;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
 import ru.vsu.edu.shlyikov_d_g.products.Cheque;
 import ru.vsu.edu.shlyikov_d_g.rooms.Store;
@@ -71,7 +70,7 @@ public class Console implements GameVisualise {
     public void showInfoGeneral(MoneyScore ms, BigDecimal cost, Amounts amounts, Storage storage){
         System.out.printf("Общая сумма закупки составила: %.2f руб.\n", cost);
         System.out.printf("У вас: %.2f руб.\n", ms.getMoney());
-        System.out.printf("Обычные продукты: %.2f/%.2f\n", amounts.getNonFreeze(), storage.getCapacity());
+        System.out.printf("Обычные продукты: %.2f/%.2f\n", amounts.getNonFreeze(), storage.getNonFridgeCapacity());
         System.out.printf("Продукты, требующие хранения в холодильниках: %.2f/%.2f\n\n", amounts.getFreeze(), storage.getFridgeCapacity());
 
     }
@@ -84,7 +83,7 @@ public class Console implements GameVisualise {
 
     @Override
     public void showInfoAmount(Amounts amounts, Room room, String roomName, Boolean amountedNonFreeze, Boolean amountedFreeze){
-        String nonFreze = String.format("Обычные продукты: %.2f/%.2f\n", amounts.getNonFreeze(), room.getCapacity());
+        String nonFreze = String.format("Обычные продукты: %.2f/%.2f\n", amounts.getNonFreeze(), room.getNonFridgeCapacity());
         String freeze = String.format("Продукты, требующие хранения в холодильниках: %.2f/%.2f\n", amounts.getFreeze(), room.getFridgeCapacity());
         if (amountedNonFreeze || amountedFreeze){
             System.out.printf("У вас недостаточно места %s для размещения этих товаров!\n", roomName);
@@ -167,13 +166,12 @@ public class Console implements GameVisualise {
             for (Integer days : room.getElements().get(key).keySet()) {
                 Consignment a = room.getElements().get(key).get(days);
                 if (a.getBatchNumber() == 0) ++i;
-                else i = a.getBatchNumber();
                 System.out.println(i + ". " + a.toStringStorage());
                 amounts.plus(a.getAmount(), a.getShouldBeInTheFridge());
             }
         }
 
-        System.out.printf("Количество обычных товаров: %.2f/%.2f\n", amounts.getNonFreeze(), room.getCapacity());
+        System.out.printf("Количество обычных товаров: %.2f/%.2f\n", amounts.getNonFreeze(), room.getNonFridgeCapacity());
         System.out.printf("Количество товаров, требующих хранение в холодильнике: %.2f/%.2f\n\n", amounts.getFreeze(), room.getFridgeCapacity());
     }
 
@@ -189,7 +187,7 @@ public class Console implements GameVisualise {
     @Override
     public void helpPurchase() {
         System.out.printf("""
-                Сейчас на ленте стоят продукты случайного покупателя. 
+                Сейчас на ленте стоят продукты случайного покупателя.
                 Вы должны пробить каждый товар либо взвесить его в зависимости от его меры.
                 """);
     }
@@ -197,11 +195,11 @@ public class Console implements GameVisualise {
     @Override
     public void showCheque(Cheque cheque, BigDecimal price) {
         System.out.println(cheque);
-        System.out.println("Выручка: " + price);
+        System.out.println("Итого: " + Utils.round(price,2));
     }
 
     @Override
-    public BigDecimal purchase(Consignment consignment, Store store) {
+    public BigDecimal purchase(Customer customer, Consignment consignment, Store store) {
         Scanner scanner = new Scanner(System.in);
         System.out.println(consignment.toStringPurchase(false));
         if (consignment.getMeasure().equals("кг")) {
@@ -272,7 +270,26 @@ public class Console implements GameVisualise {
     }
 
     @Override
-    public List<String> getFromRoom(String operationName, Unit u) {
+    public List<String> getFrom(String operationName, Unit u) {
+        String pattern = u.getPattern();
+        return circle(operationName, pattern);
+    }
+
+    @Override
+    public void endOfTheDay(int dayPassed, MoneyScore receive, MoneyScore spending, MoneyScore allMoney) {
+        System.out.printf("День %s закончен!\n\nОтчет:\n", dayPassed+1);
+        System.out.println("За сегодня заработано: " + receive);
+        System.out.println("За сегодня потрачено: " + spending);
+        System.out.println("Всего монет: " + allMoney);
+    }
+
+    @Override
+    public void startOfTheDay(int dayPassed){
+        System.out.printf("День %s начинается!\n\n", dayPassed);
+    }
+
+    @Override
+    public List<String> getFromRoom(String operationName, Unit u, Room room) {
         String pattern = u.getPattern();
         return circle(operationName, pattern);
     }

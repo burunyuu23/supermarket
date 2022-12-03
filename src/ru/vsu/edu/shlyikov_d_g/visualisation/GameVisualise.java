@@ -52,7 +52,13 @@ public interface GameVisualise {
 
     void showCheque(Cheque cheque, BigDecimal price);
 
-    BigDecimal purchase(Consignment consignment, Store store);
+    BigDecimal purchase(Customer customer, Consignment consignment, Store store);
 
-    List<String> getFromRoom(String operationName, Unit u);
+    List<String> getFromRoom(String operationName, Unit u, Room room);
+
+    List<String> getFrom(String operationName, Unit u);
+
+    void endOfTheDay(int dayPassed, MoneyScore receive, MoneyScore spending, MoneyScore allMoney);
+
+    void startOfTheDay(int dayPassed);
 }
