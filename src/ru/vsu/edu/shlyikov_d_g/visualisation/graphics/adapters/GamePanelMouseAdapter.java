@@ -20,11 +20,13 @@ public class GamePanelMouseAdapter extends MouseAdapter {
 //        System.out.println(x + " " + y);
         if (gamePanel.getCurrentGamePanel() == GamePanel.CurrentGamePanel.CASHDESK_PANEL)
             if (x < 559 && x > 244 && y < 555 && y > 389) {
+                gamePanel.getListeners().forEach(ReadyListener::ready);
                 gamePanel.setCustomerChosen(true);
             }
 
         if (gamePanel.getCurrentGamePanel() == GamePanel.CurrentGamePanel.SCALES_PANEL)
             if (x > 483 && y > 367 && x < 483 + 610 && y < 367 + 185) {
+                gamePanel.getListeners().forEach(ReadyListener::ready);
                 gamePanel.setScalesRight(true);
             }
 

@@ -2,6 +2,7 @@ package ru.vsu.edu.shlyikov_d_g.main.application.non_game;
 
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
+import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,7 +18,6 @@ import java.util.List;
 public class SupplyMenuPanel extends JPanel implements ActionListener {
     protected final Color textFieldColor = new Color(207,203,140);
     private final Font textFont = new Font("Microsoft Sans Serif", Font.BOLD, 46);
-    private boolean isContinue = false;
 
     BufferedImage backBox;
     BufferedImage frontBox;
@@ -29,13 +29,10 @@ public class SupplyMenuPanel extends JPanel implements ActionListener {
     Graphics2D g;
     JButton buyButton = new JButton("Купить!");
     int days;
+    private List<ReadyListener> listeners = new ArrayList<>();
 
-    public boolean isContinue() {
-        return isContinue;
-    }
-
-    public void setContinue(boolean aContinue) {
-        isContinue = aContinue;
+    public void addListener(ReadyListener toAdd) {
+        listeners.add(toAdd);
     }
 
     public Point getWidthAndHeight(){
@@ -72,7 +69,9 @@ public class SupplyMenuPanel extends JPanel implements ActionListener {
             e.printStackTrace();
         }
         setLayout(null);
-        buyButton.addActionListener(a -> isContinue = true);
+        buyButton.addActionListener(a -> {
+            listeners.forEach(ReadyListener::ready);
+        });
         buyButton.setFont(textFont);
         buyButton.setBounds(340, 15, 300, 50);
         buyButton.setBackground(textFieldColor);

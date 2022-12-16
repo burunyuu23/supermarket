@@ -55,7 +55,6 @@ public class Supply {
     private void process(){
         do {
             helpInput();
-
             showInfoToBuy();
             if (isEmpty()){
                 break;

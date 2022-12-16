@@ -1,8 +1,17 @@
 package ru.vsu.edu.shlyikov_d_g.main.application.helper;
 
+import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
+
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractDrawer extends AbstractPanel{
+    protected List<ReadyListener> listeners = new ArrayList<>();
+
+    public void addAllListener(List<ReadyListener> toAdd) {
+        listeners.addAll(toAdd);
+    }
     public AbstractDrawer() {
         super(new Dimension());
     }

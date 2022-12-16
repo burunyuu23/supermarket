@@ -6,6 +6,7 @@ import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
 import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.Panel;
+import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -13,6 +14,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -23,8 +25,12 @@ public class RoomPanel extends AbstractPanel {
     private final JScrollPane jScrollPane = new JScrollPane();
     private final Container cont = new Container();
     private final JButton button = new JButton();
-    private boolean ready = false;
     private String operationName = null;
+    private List<ReadyListener> listeners = new ArrayList<>();
+
+    public void addListener(ReadyListener toAdd) {
+        listeners.add(toAdd);
+    }
 
     {
         setNormal(jTextPane);
@@ -45,7 +51,7 @@ public class RoomPanel extends AbstractPanel {
         add(jScrollPane);
 
         setNormal(button);
-        button.addActionListener(a -> ready = true);
+        button.addActionListener(a -> listeners.forEach(ReadyListener::ready));
         add(button);
     }
 
@@ -107,14 +113,6 @@ public class RoomPanel extends AbstractPanel {
                 cont.add(new RoomConsignmentPanel(room.getElements().get(vendorCode).get(batch), panel, operationName, i, batch + 1, getWidth()));
             }
         }
-    }
-
-    public boolean isReady() {
-        return ready;
-    }
-
-    public void setReady(boolean ready) {
-        this.ready = ready;
     }
 
     public String getOperationName() {

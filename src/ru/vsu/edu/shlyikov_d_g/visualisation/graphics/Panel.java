@@ -1,5 +1,6 @@
 package ru.vsu.edu.shlyikov_d_g.visualisation.graphics;
 
+import org.w3c.dom.ls.LSOutput;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
 import ru.vsu.edu.shlyikov_d_g.main.Shop;
 import ru.vsu.edu.shlyikov_d_g.main.application.*;
@@ -26,6 +27,7 @@ import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.GameDrawPanelMous
 import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.GamePanelMouseAdapter;
 import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.GamePanelMouseMotionAdapter;
 
+import javax.imageio.plugins.tiff.TIFFImageReadParam;
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
@@ -41,6 +43,7 @@ public class Panel extends JPanel implements GameVisualise {
     GamePanel gamePanel = new GamePanel();
     private final ShopFrame frame;
     private List<String> list = new ArrayList<>();
+    private final ReadyEvent readyEvent = new ReadyEvent();
 
     public Shop getShop() {
         return shop;
@@ -53,6 +56,9 @@ public class Panel extends JPanel implements GameVisualise {
         gamePanel.addMouseListener(new GamePanelMouseAdapter(this, gamePanel));
         gamePanel.addMouseMotionListener(new GamePanelMouseMotionAdapter(this, gamePanel));
         supplyMenuPanel.addMouseListener(new GameDrawPanelMouseAdapter(supplyMenuPanel, this));
+        supplyMenuPanel.addListener(readyEvent);
+
+        roomPanel.addListener(readyEvent);
         mainMenuPanel.addMouseListener(new DrawPanelMouseAdapter(mainMenuPanel, this));
 
         winMain();
@@ -126,6 +132,8 @@ public class Panel extends JPanel implements GameVisualise {
     @Override
     public void showConsignments(List<Consignment> consignmentList) {
         roomPanel = new RoomPanel(this, consignmentList, "Удалить");
+        roomPanel.addListener(readyEvent);
+
         frame.setRoomPanel(roomPanel);
         frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
     }
@@ -133,11 +141,12 @@ public class Panel extends JPanel implements GameVisualise {
     @Override
     public boolean continueEvent(String name) {
         ContinuePanel continuePanel = new ContinuePanel(name);
+        continuePanel.addListener(readyEvent);
 
-        do {
-            new Thread(continuePanel::isClicked).start();
-        } while (!continuePanel.isClicked());
+        while (!readyEvent.isClicked())
+            System.out.println(readyEvent.isClicked());
 
+        readyEvent.setClicked(false);
         return continuePanel.isAnswer();
     }
 
@@ -163,12 +172,15 @@ public class Panel extends JPanel implements GameVisualise {
     @Override
     public void showRoom(Room room){
         roomPanel = new RoomPanel(this, room, "Продолжить");
+        roomPanel.addListener(readyEvent);
+
         frame.setRoomPanel(roomPanel);
         frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
-        do {
-            new Thread(() -> roomPanel.isReady()).start();
-        } while (!roomPanel.isReady());
-        roomPanel.setReady(false);
+
+        while (!readyEvent.isClicked())
+            System.out.println(readyEvent.isClicked());
+
+        readyEvent.setClicked(false);
     }
 
     @Override
@@ -195,37 +207,36 @@ public class Panel extends JPanel implements GameVisualise {
         frame.setGamePanel(gamePanel);
         frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.GAME_PANEL);
 
-        while (!gamePanel.isCustomerChosen()){
-            new Thread(() -> gamePanel.isCustomerChosen()).start();
-        }
+        while (!gamePanel.isCustomerChosen())
+            System.out.println(gamePanel.isCustomerChosen());
+
         if (consignment.checkKG()) {
             gamePanel.setCurrentGamePanel(GamePanel.CurrentGamePanel.SCALES_PANEL);
-            while (!gamePanel.isScalesRight()) {
-                new Thread(() -> gamePanel.isScalesRight()).start();
-            }
+            while (!gamePanel.isScalesRight())
+                System.out.println(gamePanel.isScalesRight());
+
             gamePanel.setCurrentGamePanel(GamePanel.CurrentGamePanel.BARCODE_AUTO_PANEL);
             gamePanel.setScalesRight(false);
-            while (!gamePanel.isSubmitted()) {
-                new Thread(() -> gamePanel.isSubmitted()).start();
-            }
+            while (!gamePanel.isSubmitted())
+                System.out.println(gamePanel.isSubmitted());
         }
         else{
             gamePanel.setCurrentGamePanel(GamePanel.CurrentGamePanel.BARCODE_MANUAL_PANEL);
             while (!gamePanel.isCompleted()) {
                 if (gamePanel.getCurrentGamePanel() == GamePanel.CurrentGamePanel.BARCODE_AUTO_PANEL) break;
-                new Thread(() -> gamePanel.isCompleted()).start();
+                System.out.println(gamePanel.isCompleted());
             }
             if (gamePanel.getCurrentGamePanel() == GamePanel.CurrentGamePanel.BARCODE_AUTO_PANEL) {
                 gamePanel.setScalesRight(false);
-                while (!gamePanel.isSubmitted()) {
-                    new Thread(() -> gamePanel.isSubmitted()).start();
-                }
+                while (!gamePanel.isSubmitted())
+                    System.out.println(gamePanel.isSubmitted());
             }
         }
         return consignment.getUnitPrice().multiply(consignment.getAmount());
     }
 
     private void circleBase(String operationName){
+
         new Thread(() -> new InfoPanel(new Dimension(), String.format("""
                 Нажмите на товары, которые хотите %s,
                 после этого выберите их количество и нажмите купить.
@@ -234,24 +245,16 @@ public class Panel extends JPanel implements GameVisualise {
     }
 
     private List<String> circle(String operationName){
-        new Thread(() -> circleBase(operationName)).start();
+
+        circleBase(operationName);
 
         if (operationName.toLowerCase(Locale.ROOT).equals("закупить"))
             frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.SUPPLY_MENU_PANEL);
-        switch (frame.getCurrentNotGamePanel()) {
-            case SUPPLY_MENU_PANEL -> {
-                do {
-                    new Thread(supplyMenuPanel::isContinue).start();
-                } while (!supplyMenuPanel.isContinue());
-                supplyMenuPanel.setContinue(false);
-            }
-            case ROOM_PANEL -> {
-                do {
-                    new Thread(() -> roomPanel.isReady()).start();
-                } while (!roomPanel.isReady());
-                roomPanel.setReady(false);
-            }
-        }
+
+        while (!readyEvent.isClicked())
+            System.out.println(readyEvent.isClicked());
+
+        readyEvent.setClicked(false);
 
         return list;
     }
@@ -260,21 +263,24 @@ public class Panel extends JPanel implements GameVisualise {
         circleBase(operationName);
 
             roomPanel = new RoomPanel(this, room, operationName);
+        roomPanel.addListener(readyEvent);
+
             frame.setRoomPanel(roomPanel);
             frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
-            do {
-                new Thread(() -> roomPanel.isReady()).start();
-            } while (!roomPanel.isReady());
-            roomPanel.setReady(false);
+
+        while (!readyEvent.isClicked())
+            System.out.println(readyEvent.isClicked());
+
+        readyEvent.setClicked(false);
 
         return list;
     }
 
     private void getFromBase(){
         list.clear();
-        do {
-            new Thread(frame::getCurrentNotGamePanelString).start();
-        } while (frame.getCurrentNotGamePanelString().equals(String.valueOf(ShopFrame.CurrentNotGamePanel.MAIN_MENU_PANEL)));
+        while (frame.getCurrentNotGamePanelString().equals(String.valueOf(ShopFrame.CurrentNotGamePanel.MAIN_MENU_PANEL))) {
+            frame.repaint();
+        }
     }
 
     @Override
@@ -299,7 +305,7 @@ public class Panel extends JPanel implements GameVisualise {
                 "Вы заработали: %.2f рублей\n" +
                 "Вы потратили: %.2f рублей\n" +
                 "Ваше состояние оценивается в %.2f рублей", dayPassed, receive.getMoney(), spending.getMoney(), allMoney.getMoney());
-        new Thread(() -> new InfoPanel(new Dimension(), dayReport).dispose()).start();
+        new InfoPanel(new Dimension(), dayReport);
         supplyMenuPanel.plusDay();
     }
 }

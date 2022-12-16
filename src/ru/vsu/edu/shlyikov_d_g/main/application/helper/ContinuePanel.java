@@ -1,19 +1,27 @@
 package ru.vsu.edu.shlyikov_d_g.main.application.helper;
 
+import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
+
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContinuePanel extends AbstractPanel {
 
-    boolean clicked = false;
-    boolean answer = false;
+    private boolean answer = false;
+    private List<ReadyListener> listeners = new ArrayList<>();
 
-    public boolean isClicked() {
-        return clicked;
+    public void addListener(ReadyListener toAdd) {
+        listeners.add(toAdd);
     }
 
     public boolean isAnswer() {
         return answer;
+    }
+
+    public void setAnswer(boolean answer) {
+        this.answer = answer;
     }
 
     public ContinuePanel(String name){
@@ -40,12 +48,12 @@ public class ContinuePanel extends AbstractPanel {
         jDialog.pack();
 
         aContinue.addActionListener(a -> {
-            clicked = true;
+            listeners.forEach(ReadyListener::ready);
             answer = true;
             jDialog.dispose();
         });
         aExit.addActionListener(a -> {
-            clicked = true;
+            listeners.forEach(ReadyListener::ready);
             answer = false;
             jDialog.dispose();
         });

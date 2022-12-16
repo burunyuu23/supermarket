@@ -4,9 +4,12 @@ import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
 import ru.vsu.edu.shlyikov_d_g.main.application.helper.AbstractPanel;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
 import ru.vsu.edu.shlyikov_d_g.rooms.Store;
+import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GamePanel extends AbstractPanel{
     BarcodeAutoPanel barcodeAutoPanel;
@@ -16,6 +19,15 @@ public class GamePanel extends AbstractPanel{
     CurrentGamePanel currentGamePanel;
     boolean customerChosen = false;
     boolean scalesRight = false;
+    private List<ReadyListener> listeners = new ArrayList<>();
+
+    public List<ReadyListener> getListeners() {
+        return listeners;
+    }
+
+    public void addListener(ReadyListener toAdd) {
+        listeners.add(toAdd);
+    }
 
     public boolean isCompleted() {
         return barcodeManualPanel.isCompleted();
@@ -41,21 +53,6 @@ public class GamePanel extends AbstractPanel{
         return barcodeAutoPanel.isSubmitted();
     }
 
-    public boolean isSwitcher() {
-        boolean switcher = barcodeManualPanel.isSwitchering();
-        if (switcher) currentGamePanel = CurrentGamePanel.BARCODE_AUTO_PANEL;
-        return switcher;
-    }
-
-    public void setSwitcher(boolean switcher) {
-        if (switcher) currentGamePanel = CurrentGamePanel.BARCODE_AUTO_PANEL;
-        barcodeManualPanel.setSwitchering(switcher);
-    }
-
-    public void setSubmitted(boolean submitted) {
-        barcodeAutoPanel.setSubmitted(submitted);
-    }
-
     public boolean isCustomerChosen() {
         return customerChosen;
     }
@@ -67,10 +64,6 @@ public class GamePanel extends AbstractPanel{
     Store store;
     Customer customer;
     Consignment consignment;
-
-    public Customer getCustomer() {
-        return customer;
-    }
 
     public Consignment getConsignment() {
         return consignment;
@@ -110,9 +103,16 @@ public class GamePanel extends AbstractPanel{
         setLayout(new CardLayout());
 
         cashdeskPanel = new CashdeskPanel(customer);
+        cashdeskPanel.addAllListener(listeners);
+
         scalesPanel = new ScalesPanel(consignment);
+        scalesPanel.addAllListener(listeners);
+
         barcodeAutoPanel = new BarcodeAutoPanel(consignment);
+        barcodeAutoPanel.addAllListener(listeners);
+
         barcodeManualPanel = new BarcodeManualPanel(consignment);
+        barcodeManualPanel.addAllListener(listeners);
 
         add(cashdeskPanel, String.valueOf(CurrentGamePanel.CASHDESK_PANEL));
         add(scalesPanel, String.valueOf(CurrentGamePanel.SCALES_PANEL));
