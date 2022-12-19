@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface GameVisualise {
 
-    void helpStart();
+    void start();
 
     void showProducts(List<Consignment> basket);
 

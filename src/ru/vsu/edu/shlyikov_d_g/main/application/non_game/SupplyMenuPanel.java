@@ -91,8 +91,6 @@ public class SupplyMenuPanel extends JPanel implements ActionListener {
         g.setFont(textFont);
         g.setColor(Color.GREEN);
 
-//         todo баг при продолжении/перемещении + количество дней не обновляется + при обработке покупателей не меняется сцена ЭТО ВСЁ ИЗ-ЗА ПАУЗЫ В ПОТОКЕ
-
         g.drawString(String.format("Сейчас %d день!", days), 320, 110);
 
         for (int i = 0; i < supplierList.size(); i++) {

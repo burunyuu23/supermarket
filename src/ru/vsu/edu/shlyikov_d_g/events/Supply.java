@@ -30,7 +30,7 @@ public class Supply {
         this.supplierQuantity = supplierQuantity;
     }
 
-    private void reset(){
+    public void reset(){
         supplierList = new ArrayList<>();
         consignmentList = new ArrayList<>();
         amounts = new Amounts(storage.getAmounts().getFreeze(), storage.getAmounts().getNonFreeze());
@@ -42,6 +42,10 @@ public class Supply {
 
     public List<Consignment> getElements(){
         return consignmentList;
+    }
+
+    public List<Supplier> getSupplierList() {
+        return supplierList;
     }
 
     public BigDecimal supply(){
@@ -59,7 +63,7 @@ public class Supply {
             if (isEmpty()){
                 break;
             }
-            add();
+            add(visualiser.getFrom("закупить", new SupplyUnit("\\w+-\\w+-\\w+[\\.\\w+]*")));
             showInfo();
             showInfoWhatGetting();
             while (visualiser.continueEvent("Удалить товары из корзинки")) {
@@ -98,8 +102,8 @@ public class Supply {
     }
 
     //  [3-1-1020,2-3-49,2-3-500,1-2-10,2-3-500]
-    private void add(){
-        for (String supplyInput: visualiser.getFrom("закупить", new SupplyUnit("\\w+-\\w+-\\w+[\\.\\w+]*"))) {
+    public void add(List<String> supplyGetFrom){
+        for (String supplyInput : supplyGetFrom) {
 
             SupplyUnit supplyUnit = new SupplyUnit("\\w+[\\.\\w+]*");
             SupplyUnit pu = (SupplyUnit) supplyUnit.fromString(supplyInput);

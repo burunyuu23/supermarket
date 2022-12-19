@@ -1,6 +1,6 @@
 package ru.vsu.edu.shlyikov_d_g.main.application.non_game;
 
-import ru.vsu.edu.shlyikov_d_g.main.application.helper.InfoPanel;
+import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.PopUpDisplay;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -42,6 +42,10 @@ public class MainMenuPanel extends JPanel implements ActionListener {
         return startGame;
     }
 
+    public JButton getHelpGame() {
+        return helpGame;
+    }
+
     public void setStartGame(JButton startGame) {
         this.startGame = startGame;
         addButton(startGame);
@@ -55,32 +59,20 @@ public class MainMenuPanel extends JPanel implements ActionListener {
         testGame.setBounds(547,-222,634,90);
 
         testGame.addActionListener(actionEvent -> {
-            JDialog jDialog = new JDialog();
-            jDialog.setTitle("короче анекдог!");
-            JPanel pan = new JPanel();
-            pan.setLayout(new FlowLayout());
-            JTextArea area = new JTextArea("""
+            PopUpDisplay.showHelp("""
                     Работа программиста и шамана имеет много общего -\040
                     оба бормочут непонятные слова, совершают непонятные действия\040
                     и не могут объяснить, как оно работает
                     """);
-            area.setEditable(false);
-            jDialog.setBackground(textFieldColor);
-            pan.setBackground(textFieldColor);
-            area.setBackground(textFieldColor);
-            pan.add(area);
-            jDialog.add(pan);
-            jDialog.setBounds(250,250,420,120);
-            jDialog.setVisible(true);
         });
         helpGame = new JButton("помогите пожалусто");
         helpGame.setBackground(textFieldColor);
         helpGame.setFont(textFont);
         helpGame.setBounds(547,-222,634,90);
 
-        helpGame.addActionListener(actionEvent -> new Thread(() -> new InfoPanel(new Dimension(),"нет, помоги себе сам")).start());
+        helpGame.addActionListener(actionEvent -> PopUpDisplay.showHelp("test"));
         buttons.add(testGame);
-            buttons.add(helpGame);
+        buttons.add(helpGame);
     }
 
     public void setTextField(JTextField textField) {

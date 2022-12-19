@@ -1,20 +1,20 @@
 package ru.vsu.edu.shlyikov_d_g.main.application.helper;
 
-import ru.vsu.edu.shlyikov_d_g.main.application.helper.AbstractPanel;
-
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class InfoPanel extends AbstractPanel {
-    protected JDialog jDialog = new JDialog();
+    protected JFrame jFrame = new JFrame();
     protected JTextArea jTextPane = new JTextArea(5,30);
 
-    public InfoPanel(Dimension dimension, String string){
-        super(dimension);
+    public InfoPanel(String string){
+        super(new Dimension());
 
-        jDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        jDialog.setResizable(false);
-        jDialog.add(this);
+        jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        jFrame.setResizable(false);
+        jFrame.add(this);
         jTextPane.setEditable(false);
         jTextPane.setText(string);
         jTextPane.setWrapStyleWord(true);
@@ -25,17 +25,9 @@ public class InfoPanel extends AbstractPanel {
         add(jTextPane);
         setVisible(true);
 
-        jDialog.setVisible(true);
-        jDialog.pack();
-    }
+        jFrame.setVisible(true);
+        jFrame.pack();
 
-    public void dispose(){
-        try {
-            Thread.sleep(7500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        jDialog.dispose();
+        new Timer(7500, e -> jFrame.dispose()).start();
     }
 }

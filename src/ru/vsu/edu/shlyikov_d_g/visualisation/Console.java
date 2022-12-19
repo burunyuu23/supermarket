@@ -20,7 +20,7 @@ import java.util.Scanner;
 public class Console implements GameVisualise {
 
     @Override
-    public void helpStart(){
+    public void start(){
         System.out.println("Добро пожаловать в игру “Супермаркет”!\n" +
                 "В начале игры вы имеете 500 тысяч рублей. На них вы должны будете открыть магазин, который будет приносить вам доход. " +
                 "Закупайте товары, следите за их сроком годности, устанавливайте наценку, при которой прибыль будет наибольшей.\n" +

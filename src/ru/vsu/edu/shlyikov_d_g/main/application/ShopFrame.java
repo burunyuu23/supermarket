@@ -4,9 +4,12 @@ import ru.vsu.edu.shlyikov_d_g.main.application.game.GamePanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.non_game.MainMenuPanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.non_game.SupplyMenuPanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.room.RoomPanel;
+import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ShopFrame extends JFrame{
     private JPanel formPanel;
@@ -17,6 +20,11 @@ public class ShopFrame extends JFrame{
     private JPanel gamePanel;
     private JPanel roomPanel = new RoomPanel();
     private CurrentNotGamePanel currentNotGamePanel;
+    private List<ReadyListener> listeners = new ArrayList<>();
+
+    public void addListener(ReadyListener toAdd) {
+        listeners.add(toAdd);
+    }
 
     public JPanel getGamePanel() {
         return gamePanel;
@@ -70,6 +78,7 @@ public class ShopFrame extends JFrame{
         startGame.setBounds(547,-222,634,90);
 
         startGame.addActionListener(actionEvent -> {
+            listeners.forEach(ReadyListener::ready);
             System.out.println(jTextField.getText());
             currentNotGamePanel = CurrentNotGamePanel.SUPPLY_MENU_PANEL;
             goToLayout(mainCardsPanel);
@@ -94,4 +103,9 @@ public class ShopFrame extends JFrame{
         this.pack();
     }
 
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        repaint();
+    }
 }

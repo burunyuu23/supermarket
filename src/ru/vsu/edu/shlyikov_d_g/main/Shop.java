@@ -1,11 +1,9 @@
 package ru.vsu.edu.shlyikov_d_g.main;
 
 import ru.vsu.edu.shlyikov_d_g.events.Purchase;
-import ru.vsu.edu.shlyikov_d_g.utils.DatePrinter;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.events.Supply;
 import ru.vsu.edu.shlyikov_d_g.events.TransferGoods;
-import ru.vsu.edu.shlyikov_d_g.products.Products;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 import ru.vsu.edu.shlyikov_d_g.rooms.Store;
 import ru.vsu.edu.shlyikov_d_g.visualisation.Console;
@@ -23,6 +21,14 @@ public class Shop {
     private final Storage storage;
     private final Store store;
     private final MoneyScore money;
+
+    private Supply supply;
+    private MoneyScore dayMoney;
+    private MoneyScore supplyMoney;
+
+    public Supply getSupply() {
+        return supply;
+    }
 
     private int dayPassed;
 //    private Queue<Event> q;
@@ -58,39 +64,40 @@ public class Shop {
         }
     }
 
-    private void start() {
-        chooseGameSettings();
-        gameVisualise.helpStart();
-    }
-
     public void play(){
-        start();
-
-        while (true) {
-            gameVisualise.startOfTheDay(dayPassed);
-
-            Supply supply = new Supply(gameVisualise, money, storage, 3);
-
-            MoneyScore dayMoney = new MoneyScore(new BigDecimal(0));
-            MoneyScore supplyMoney = new MoneyScore(supply.supply());
-
-            storage.addElements(supply.getElements());
-            new TransferGoods(storage, store, gameVisualise).askStorage();
-
-            for (int i = 0; i < 4; i++) {
-                dayMoney.receive(new Purchase(store, gameVisualise).purchase());
-            }
-
-            storage.nextDay();
-            store.nextDay();
-            money.spend(supplyMoney.getMoney());
-            gameVisualise.endOfTheDay(dayPassed, dayMoney, supplyMoney, money);
-            if (!gameVisualise.continueEvent("Продолжить играть")){
-                break;
-            }
-            dayPassed++;
-        }
+        chooseGameSettings();
+        gameVisualise.start();
     }
+
+    public void startDay(){
+        supply = new Supply(gameVisualise, money, storage, 3);
+        dayMoney = new MoneyScore(new BigDecimal(0));
+    }
+
+    public void supply(){
+        supplyMoney = new MoneyScore(supply.supply());
+        storage.addElements(supply.getElements());
+    }
+
+    public void transfer(){
+        new TransferGoods(storage, store, gameVisualise).askStorage();
+    }
+
+    public void purchase(){
+        dayMoney.receive(new Purchase(store, gameVisualise).purchase());
+    }
+
+    public void nextDay(){
+        storage.nextDay();
+        store.nextDay();
+        money.spend(supplyMoney.getMoney());
+        gameVisualise.endOfTheDay(dayPassed, dayMoney, supplyMoney, money);
+
+        dayPassed++;
+
+        startDay();
+    }
+
 
     public Storage getStorage() {
         return storage;

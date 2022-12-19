@@ -1,17 +1,16 @@
 package ru.vsu.edu.shlyikov_d_g.visualisation.graphics;
 
-import org.w3c.dom.ls.LSOutput;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
 import ru.vsu.edu.shlyikov_d_g.main.Shop;
 import ru.vsu.edu.shlyikov_d_g.main.application.*;
 import ru.vsu.edu.shlyikov_d_g.main.application.game.GamePanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.helper.ChequePanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.helper.ContinuePanel;
-import ru.vsu.edu.shlyikov_d_g.main.application.helper.InfoPanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.non_game.MainMenuPanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.non_game.SupplyMenuPanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.room.RoomPanel;
 import ru.vsu.edu.shlyikov_d_g.products.Cheque;
+import ru.vsu.edu.shlyikov_d_g.products.units.SupplyUnit;
 import ru.vsu.edu.shlyikov_d_g.rooms.Store;
 import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
@@ -22,14 +21,9 @@ import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
 import ru.vsu.edu.shlyikov_d_g.visualisation.GameVisualise;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.DrawPanelMouseAdapter;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.GameDrawPanelMouseAdapter;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.GamePanelMouseAdapter;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.GamePanelMouseMotionAdapter;
+import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.*;
 
-import javax.imageio.plugins.tiff.TIFFImageReadParam;
 import javax.swing.*;
-import java.awt.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,11 +46,28 @@ public class Panel extends JPanel implements GameVisualise {
     public Panel(Shop shop){
         this.shop = shop;
         supplyMenuPanel = new SupplyMenuPanel(shop.getDayPassed());
+
         frame = new ShopFrame(mainMenuPanel, supplyMenuPanel, gamePanel);
+
         gamePanel.addMouseListener(new GamePanelMouseAdapter(this, gamePanel));
         gamePanel.addMouseMotionListener(new GamePanelMouseMotionAdapter(this, gamePanel));
         supplyMenuPanel.addMouseListener(new GameDrawPanelMouseAdapter(supplyMenuPanel, this));
-        supplyMenuPanel.addListener(readyEvent);
+
+        supplyMenuPanel.addListener(() -> {
+            shop.getSupply().add(list);
+            frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
+            showConsignments(shop.getSupply().getElements());
+        });
+
+        frame.addListener(() -> {
+            if (frame.getCurrentNotGamePanel().equals(ShopFrame.CurrentNotGamePanel.MAIN_MENU_PANEL)) {
+                getFrom("закупить", new SupplyUnit(""));
+                shop.startDay();
+                shop.getSupply().reset();
+                showSuppliers(shop.getSupply().getSupplierList());
+            }
+        });
+
 
         roomPanel.addListener(readyEvent);
         mainMenuPanel.addMouseListener(new DrawPanelMouseAdapter(mainMenuPanel, this));
@@ -78,7 +89,7 @@ public class Panel extends JPanel implements GameVisualise {
     }
 
     @Override
-    public void helpStart(){
+    public void start(){
         String help = ("Добро пожаловать в игру “Супермаркет”!\n" +
                 "В начале игры вы имеете 500 тысяч рублей. На них вы должны будете открыть магазин, который будет приносить вам доход. " +
                 "Закупайте товары, следите за их сроком годности, устанавливайте наценку, при которой прибыль будет наибольшей.\n" +
@@ -92,7 +103,7 @@ public class Panel extends JPanel implements GameVisualise {
                 "После рабочего дня вы будете подсчитывать расходы и доходы, а также составлять дальнейший план развития.\n" +
 
                 "Удачи в росте вашей торговой сети!\n");
-        new Thread(() -> new InfoPanel(new Dimension(), help).dispose()).start();
+        PopUpDisplay.showHelp(help);
     }
 
     @Override
@@ -195,7 +206,7 @@ public class Panel extends JPanel implements GameVisualise {
 
     @Override
     public void showCheque(Cheque cheque, BigDecimal price) {
-        new Thread(() -> new ChequePanel(new Dimension(),cheque.toString() + "\n" + "Итого: " + Utils.round(price,2))).start();
+        PopUpDisplay.showCheque(cheque.toString() + "\n" + "Итого: " + Utils.round(price,2));
     }
 
     @Override
@@ -236,12 +247,11 @@ public class Panel extends JPanel implements GameVisualise {
     }
 
     private void circleBase(String operationName){
-
-        new Thread(() -> new InfoPanel(new Dimension(), String.format("""
+        PopUpDisplay.showHelp(String.format("""
                 Нажмите на товары, которые хотите %s,
                 после этого выберите их количество и нажмите купить.
                 После закупки нажмите на купить в меню, где все товары.
-                """, operationName.toLowerCase(Locale.ROOT))).dispose()).start();
+                """, operationName));
     }
 
     private List<String> circle(String operationName){
@@ -250,11 +260,6 @@ public class Panel extends JPanel implements GameVisualise {
 
         if (operationName.toLowerCase(Locale.ROOT).equals("закупить"))
             frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.SUPPLY_MENU_PANEL);
-
-        while (!readyEvent.isClicked())
-            System.out.println(readyEvent.isClicked());
-
-        readyEvent.setClicked(false);
 
         return list;
     }
@@ -278,9 +283,6 @@ public class Panel extends JPanel implements GameVisualise {
 
     private void getFromBase(){
         list.clear();
-        while (frame.getCurrentNotGamePanelString().equals(String.valueOf(ShopFrame.CurrentNotGamePanel.MAIN_MENU_PANEL))) {
-            frame.repaint();
-        }
     }
 
     @Override
@@ -305,7 +307,7 @@ public class Panel extends JPanel implements GameVisualise {
                 "Вы заработали: %.2f рублей\n" +
                 "Вы потратили: %.2f рублей\n" +
                 "Ваше состояние оценивается в %.2f рублей", dayPassed, receive.getMoney(), spending.getMoney(), allMoney.getMoney());
-        new InfoPanel(new Dimension(), dayReport);
+        PopUpDisplay.showHelp(dayReport);
         supplyMenuPanel.plusDay();
     }
 }
