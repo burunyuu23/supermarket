@@ -30,7 +30,7 @@ public interface GameVisualise {
 
     void showInfoCost(MoneyScore ms, BigDecimal cost);
 
-    void showInfoAmount(Amounts amounts, Room room, String roomName, Boolean amountedNonFreeze, Boolean amountedFreeze);
+    void showInfoAmount(Amounts amounts, Room room, String roomName, Boolean normalize);
 
     void showConsignments(List<Consignment> consignmentList);
 
@@ -54,7 +54,7 @@ public interface GameVisualise {
 
     BigDecimal purchase(Customer customer, Consignment consignment, Store store);
 
-    List<String> getFromRoom(String operationName, Unit u, Room room);
+    List<String> getFrom(String operationName, Unit u, Room room);
 
     List<String> getFrom(String operationName, Unit u);
 

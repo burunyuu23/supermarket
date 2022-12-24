@@ -12,21 +12,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GamePanel extends AbstractPanel{
+    CashdeskPanel cashdeskPanel;
+
+    ScalesPanel scalesPanel;
+
     BarcodeAutoPanel barcodeAutoPanel;
     BarcodeManualPanel barcodeManualPanel;
-    CashdeskPanel cashdeskPanel;
-    ScalesPanel scalesPanel;
+
     CurrentGamePanel currentGamePanel;
     boolean customerChosen = false;
     boolean scalesRight = false;
-    private List<ReadyListener> listeners = new ArrayList<>();
 
-    public List<ReadyListener> getListeners() {
-        return listeners;
+    private List<ReadyListener> cashDeskListeners = new ArrayList<>();
+
+    private List<ReadyListener> scalesListeners = new ArrayList<>();
+
+    private List<ReadyListener> barcodeAutoListeners = new ArrayList<>();
+
+    private List<ReadyListener> barcodeManualListeners = new ArrayList<>();
+
+    public void addBarcodeManualListener(ReadyListener toAdd) {
+        barcodeManualListeners.add(toAdd);
     }
 
-    public void addListener(ReadyListener toAdd) {
-        listeners.add(toAdd);
+    public void addBarcodeAutoListener(ReadyListener toAdd) {
+        barcodeAutoListeners.add(toAdd);
+    }
+    public void addScalesListener(ReadyListener toAdd) {
+        scalesListeners.add(toAdd);
+    }
+
+    public void addCashDeskListener(ReadyListener toAdd) {
+        cashDeskListeners.add(toAdd);
+    }
+
+    public CashdeskPanel getCashdeskPanel() {
+        return cashdeskPanel;
+    }
+
+    public ScalesPanel getScalesPanel() {
+        return scalesPanel;
+    }
+
+    public BarcodeAutoPanel getBarcodeAutoPanel() {
+        return barcodeAutoPanel;
+    }
+
+    public BarcodeManualPanel getBarcodeManualPanel() {
+        return barcodeManualPanel;
     }
 
     public boolean isCompleted() {
@@ -103,16 +136,16 @@ public class GamePanel extends AbstractPanel{
         setLayout(new CardLayout());
 
         cashdeskPanel = new CashdeskPanel(customer);
-        cashdeskPanel.addAllListener(listeners);
+        cashdeskPanel.setListeners(cashDeskListeners);
 
         scalesPanel = new ScalesPanel(consignment);
-        scalesPanel.addAllListener(listeners);
+        scalesPanel.setListeners(scalesListeners);
 
         barcodeAutoPanel = new BarcodeAutoPanel(consignment);
-        barcodeAutoPanel.addAllListener(listeners);
+        barcodeAutoPanel.setListeners(barcodeAutoListeners);
 
         barcodeManualPanel = new BarcodeManualPanel(consignment);
-        barcodeManualPanel.addAllListener(listeners);
+        barcodeManualPanel.setListeners(barcodeManualListeners);
 
         add(cashdeskPanel, String.valueOf(CurrentGamePanel.CASHDESK_PANEL));
         add(scalesPanel, String.valueOf(CurrentGamePanel.SCALES_PANEL));

@@ -15,36 +15,64 @@ import java.util.List;
 public class Purchase {
     private final Store store;
     private Customer customer;
-    private List<Cheque> chequeList = new ArrayList<>();
+    private Cheque cheque;
     private GameVisualise gameVisualise;
+    private BigDecimal price = new BigDecimal(0);
 
     public Purchase(Store store, GameVisualise gameVisualise) {
         this.store = store;
         this.gameVisualise = gameVisualise;
     }
 
+    public Cheque getCheque() {
+        return cheque;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
     public void setCustomer(Customer customer){
         this.customer = customer;
     }
 
-    public BigDecimal purchase(){
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void newCustomer(){
         setCustomer(new Customer());
         customer.chooseProducts(store);
+    }
 
-        BigDecimal price = new BigDecimal(0);
+    public BigDecimal purchase(){
+        newCustomer();
+
         for (Consignment c : customer.getBasket()) {
-            price = price.add(gameVisualise.purchase(customer, c, store)); // TODO добавить скидки
+            price = countPrice(gameVisualise.purchase(customer, c, store));
         }
 
-        Cheque cheque = new Cheque(customer.getBasket());
+        createCheque();
+        showCheque();
+        removeFromStore();
 
-        if (!price.equals(new BigDecimal(0))){
-        store.removeElements(customer.getBasket());
-        chequeList.add(cheque);
-
-        gameVisualise.showCheque(cheque, price);
-//        gameVisualise.showRoom(store);
-        }
         return cheque.getGeneralAmount();
+    }
+
+    public void removeFromStore(){
+        store.removeElements(customer.getBasket());
+    }
+
+    public void createCheque(){
+        cheque = new Cheque(customer.getBasket());
+    }
+
+    public void showCheque(){
+        gameVisualise.showCheque(cheque, price);
+    }
+
+    public BigDecimal countPrice(BigDecimal count){
+        BigDecimal price = new BigDecimal(0);
+        return price.add(count);
     }
 }

@@ -56,6 +56,10 @@ public class Supply {
         return Utils.round(cost, 2);
     }
 
+     public BigDecimal supplyMoney(){
+         return Utils.round(cost, 2);
+     }
+
     private void process(){
         do {
             helpInput();
@@ -68,7 +72,7 @@ public class Supply {
             showInfoWhatGetting();
             while (visualiser.continueEvent("Удалить товары из корзинки")) {
                 visualiser.showInfoGeneral(moneyScore, cost, amounts, storage);
-                remove();
+                remove(visualiser.getFrom("удалить", new SupplyUnit("\\w+-\\w+[\\.\\w+]*")));
             }
         }
         while (continueEvent());
@@ -153,15 +157,15 @@ public class Supply {
         cost = Utils.round(cost.add(consignment.getUnitPrice().multiply(minusAmount)),2);
     }
 
-    private void remove(){
+    public void remove(List<String> list){
         visualiser.remove();
 
         showInfoToBuy();
         visualiser.showConsignments(consignmentList);
 
-        visualiser.showInfoGeneral(moneyScore, cost, amounts, storage);
+        List<SupplyUnit> puList = SupplyUnit.toSupplyUnitList(list);
 
-        List<SupplyUnit> puList = SupplyUnit.toSupplyUnitList(visualiser.getFrom("удалить", new SupplyUnit("\\w+-\\w+[\\.\\w+]*")));
+        visualiser.showInfoGeneral(moneyScore, cost, amounts, storage);
 
         puList.sort(Comparator.comparing(SupplyUnit::getNumConsignment).reversed());
 
@@ -190,14 +194,16 @@ public class Supply {
         visualiser.showConsignments(consignmentList);
     }
 
-    private void showInfo(){
-        if (cost.compareTo(moneyScore.getMoney()) > 0 ||
+    public boolean isNormalize(){
+        return cost.compareTo(moneyScore.getMoney()) > 0 ||
                 amounts.getNonFreeze().compareTo(storage.getNonFridgeCapacity()) > 0 ||
-                amounts.getFreeze().compareTo(storage.getFridgeCapacity()) > 0){
-            while (cost.compareTo(moneyScore.getMoney()) > 0 ||
-                    amounts.getNonFreeze().compareTo(storage.getNonFridgeCapacity()) > 0 ||
-                    amounts.getFreeze().compareTo(storage.getFridgeCapacity()) > 0){
-                remove();
+                amounts.getFreeze().compareTo(storage.getFridgeCapacity()) > 0;
+    }
+
+    private void showInfo(){
+        if (isNormalize()){
+            while (isNormalize()){
+                remove(visualiser.getFrom("удалить", new SupplyUnit("\\w+-\\w+[\\.\\w+]*")));
             }
         }
             else{

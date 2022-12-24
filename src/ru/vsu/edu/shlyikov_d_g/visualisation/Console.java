@@ -1,6 +1,7 @@
 package ru.vsu.edu.shlyikov_d_g.visualisation;
 
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
+import ru.vsu.edu.shlyikov_d_g.main.Shop;
 import ru.vsu.edu.shlyikov_d_g.products.Cheque;
 import ru.vsu.edu.shlyikov_d_g.rooms.Store;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
@@ -18,6 +19,11 @@ import java.util.Locale;
 import java.util.Scanner;
 
 public class Console implements GameVisualise {
+    private final Shop shop;
+
+    public Console(Shop shop){
+        this.shop = shop;
+    }
 
     @Override
     public void start(){
@@ -34,6 +40,7 @@ public class Console implements GameVisualise {
                 "После рабочего дня вы будете подсчитывать расходы и доходы, а также составлять дальнейший план развития.\n" +
 
                 "Удачи в росте вашей торговой сети!\n");
+        shop.circle();
     }
 
     @Override
@@ -82,10 +89,10 @@ public class Console implements GameVisualise {
     }
 
     @Override
-    public void showInfoAmount(Amounts amounts, Room room, String roomName, Boolean amountedNonFreeze, Boolean amountedFreeze){
+    public void showInfoAmount(Amounts amounts, Room room, String roomName, Boolean normalize){
         String nonFreze = String.format("Обычные продукты: %.2f/%.2f\n", amounts.getNonFreeze(), room.getNonFridgeCapacity());
         String freeze = String.format("Продукты, требующие хранения в холодильниках: %.2f/%.2f\n", amounts.getFreeze(), room.getFridgeCapacity());
-        if (amountedNonFreeze || amountedFreeze){
+        if (normalize){
             System.out.printf("У вас недостаточно места %s для размещения этих товаров!\n", roomName);
             System.out.print(nonFreze);
             System.out.println(freeze);
@@ -289,7 +296,7 @@ public class Console implements GameVisualise {
     }
 
     @Override
-    public List<String> getFromRoom(String operationName, Unit u, Room room) {
+    public List<String> getFrom(String operationName, Unit u, Room room) {
         String pattern = u.getPattern();
         return circle(operationName, pattern);
     }

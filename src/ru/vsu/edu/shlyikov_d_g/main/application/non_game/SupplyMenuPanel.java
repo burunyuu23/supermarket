@@ -85,8 +85,10 @@ public class SupplyMenuPanel extends JPanel implements ActionListener {
         Graphics2D g = (Graphics2D) gr;
         this.g = g;
 
-        buyButton.paint(g);
         g.drawImage(background, 0, 0, null);
+        g.translate(buyButton.getX(), buyButton.getY());
+        buyButton.paint(g);
+        g.translate(-buyButton.getX(), -buyButton.getY());
 
         g.setFont(textFont);
         g.setColor(Color.GREEN);

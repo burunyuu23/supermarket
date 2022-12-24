@@ -1,7 +1,6 @@
 package ru.vsu.edu.shlyikov_d_g.main.application.game;
 
 import ru.vsu.edu.shlyikov_d_g.main.application.helper.AbstractDrawer;
-import ru.vsu.edu.shlyikov_d_g.main.application.helper.ConsignmentPanel;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
 import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
 
@@ -11,6 +10,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BarcodeManualPanel extends AbstractDrawer {
     BufferedImage back = null;
@@ -34,24 +35,12 @@ public class BarcodeManualPanel extends AbstractDrawer {
         this.completed = completed;
     }
 
-    public boolean isSwitchering() {
-        return switchering;
-    }
-
-    public void setSwitchering(boolean switchering) {
-        this.switchering = switchering;
-    }
-
     public BarcodeManualPanel(Consignment consignment){
         this.consignment = consignment;
         setLayout(null);
         setNormal(switcher);
         switcher.setBounds(getWidth() - 120, getHeight()/2 - 50, 100, 100);
 
-        switcher.addActionListener(a -> {
-            listeners.forEach(ReadyListener::ready);
-//            switchering = true;
-        });
         try {
             back = ImageIO.read(new File("C:\\Users\\zEzzLike\\IdeaProjects\\oop_atta1\\src\\ru\\vsu\\edu\\shlyikov_d_g\\resources\\barcode2_background.png"));
             consignmentIcon = ImageIO.read(new File("C:\\Users\\zEzzLike\\IdeaProjects\\oop_atta1\\src\\ru\\vsu\\edu\\shlyikov_d_g\\resources\\product.png"));

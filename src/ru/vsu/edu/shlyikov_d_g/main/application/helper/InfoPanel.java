@@ -2,12 +2,10 @@ package ru.vsu.edu.shlyikov_d_g.main.application.helper;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class InfoPanel extends AbstractPanel {
     protected JFrame jFrame = new JFrame();
-    protected JTextArea jTextPane = new JTextArea(5,30);
+    protected JTextPane jTextPane = new JTextPane();
 
     public InfoPanel(String string){
         super(new Dimension());
@@ -16,9 +14,6 @@ public class InfoPanel extends AbstractPanel {
         jFrame.setResizable(false);
         jFrame.add(this);
         jTextPane.setEditable(false);
-        jTextPane.setText(string);
-        jTextPane.setWrapStyleWord(true);
-        jTextPane.setLineWrap(true);
         jTextPane.setAlignmentX(JTextField.CENTER);
         jTextPane.setText(string);
         setNormal(jTextPane);

@@ -12,6 +12,15 @@ public abstract class AbstractDrawer extends AbstractPanel{
     public void addAllListener(List<ReadyListener> toAdd) {
         listeners.addAll(toAdd);
     }
+
+    public List<ReadyListener> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<ReadyListener> listeners) {
+        this.listeners = listeners;
+    }
+
     public AbstractDrawer() {
         super(new Dimension());
     }

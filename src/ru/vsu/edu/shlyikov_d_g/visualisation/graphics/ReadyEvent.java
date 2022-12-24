@@ -14,7 +14,5 @@ public class ReadyEvent implements ReadyListener {
     }
 
     @Override
-    public void ready() {
-        setClicked(true);
-    }
+    public void ready() {setClicked(true);}
 }

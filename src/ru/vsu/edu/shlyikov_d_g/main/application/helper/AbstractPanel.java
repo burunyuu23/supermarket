@@ -9,7 +9,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public abstract class AbstractPanel extends JPanel {
+public abstract class AbstractPanel extends JPanel
+{
     protected final Color textFieldColor = new Color(207,203,140);
     protected final Font textFont = new Font("Microsoft Sans Serif", Font.BOLD, 46);
     protected Graphics2D g;

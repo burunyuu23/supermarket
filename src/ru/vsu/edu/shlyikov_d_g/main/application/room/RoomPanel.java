@@ -20,11 +20,10 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class RoomPanel extends AbstractPanel {
-    private Room room;
     private final JTextPane jTextPane = new JTextPane();
     private final JScrollPane jScrollPane = new JScrollPane();
-    private final Container cont = new Container();
-    private final JButton button = new JButton();
+    private Container cont = new Container();
+    private final JButton continueButton = new JButton();
     private String operationName = null;
     private List<ReadyListener> listeners = new ArrayList<>();
 
@@ -32,7 +31,7 @@ public class RoomPanel extends AbstractPanel {
         listeners.add(toAdd);
     }
 
-    {
+    private void init(){
         setNormal(jTextPane);
         jTextPane.setEditable(false);
         StyledDocument doc = jTextPane.getStyledDocument();
@@ -40,7 +39,7 @@ public class RoomPanel extends AbstractPanel {
         StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
         doc.setParagraphAttributes(0, doc.getLength(), center, false);
         jTextPane.setStyledDocument(doc);
-        add(jTextPane, BorderLayout.CENTER);
+        add(jTextPane);
 
         cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
 
@@ -50,13 +49,32 @@ public class RoomPanel extends AbstractPanel {
         jScrollPane.getViewport().setView(cont);
         add(jScrollPane);
 
-        setNormal(button);
-        button.addActionListener(a -> listeners.forEach(ReadyListener::ready));
-        add(button);
+        setNormal(continueButton);
+        continueButton.addActionListener(a -> listeners.forEach(ReadyListener::ready));
+        add(continueButton);
     }
 
     public RoomPanel(){
         super(new Dimension());
+    }
+
+    public void refresh(List<Consignment> consignmentList){
+        Room room1 = panel.getShop().getStorage();
+        String toRoom = getRoomString(room1);
+        Amounts amounts = Utils.countAmounts(consignmentList);
+        jTextPane.setText("Корзинка" + "\n"
+                + "Продукты требующие заморозки: " + amounts.getFreeze() + "\n"
+                + "Обычные продукты: " + amounts.getNonFreeze() + "\n"
+                + "to: " + toRoom + "\n"
+                + "money: " + Utils.countPrice(consignmentList) + "/" + panel.getShop().getMoney().getMoney());
+        continueButton.setText(operationName);
+
+        for (int i = 0; i < consignmentList.size(); i++) {
+            Consignment consignment = consignmentList.get(i);
+            cont.add(new RoomConsignmentPanel(consignment, panel, operationName,i + 1, -1, getWidth()));
+        }
+        init();
+        repaint();
     }
 
     public RoomPanel(Panel panel, List<Consignment> consignmentList, String operationName) {
@@ -64,21 +82,7 @@ public class RoomPanel extends AbstractPanel {
 
         this.operationName = operationName;
 
-        Room room1 = panel.getShop().getStorage();
-        String toRoom = getRoomString(room1);
-        Amounts amounts = Utils.countAmounts(consignmentList);
-            jTextPane.setText("Корзинка" + "\n"
-                    + "Продукты требующие заморозки: " + amounts.getFreeze() + "\n"
-                    + "Обычные продукты: " + amounts.getNonFreeze() + "\n"
-                    + "to: " + toRoom + "\n"
-                    + "money: " + Utils.countPrice(consignmentList) + "/" + panel.getShop().getMoney().getMoney());
-        button.setText(operationName);
-
-        for (int i = 0; i < consignmentList.size(); i++) {
-            Consignment consignment = consignmentList.get(i);
-            cont.add(new RoomConsignmentPanel(consignment, panel, operationName,i + 1, -1, getWidth()));
-        }
-        repaint();
+        refresh(consignmentList);
     }
 
     private String getRoomString(Room room){
@@ -87,8 +91,8 @@ public class RoomPanel extends AbstractPanel {
                 + "Обычные продукты: " + room.getAmounts().getNonFreeze() + "/" + room.getNonFridgeCapacity();
     }
 
-    public RoomPanel(Panel panel, Room room, String operationName) {
-        super(panel);
+    public void refresh(Room room){
+        cont = new Container();
 
         String fromRoom = getRoomString(room);
         if(Objects.equals(operationName.toLowerCase(Locale.ROOT), "переместить")) {
@@ -104,7 +108,7 @@ public class RoomPanel extends AbstractPanel {
         else{
             jTextPane.setText(fromRoom);
         }
-        button.setText(operationName);
+        continueButton.setText(operationName);
 
         int i = 0;
         for (String vendorCode : room.getElements().keySet()) {
@@ -113,6 +117,16 @@ public class RoomPanel extends AbstractPanel {
                 cont.add(new RoomConsignmentPanel(room.getElements().get(vendorCode).get(batch), panel, operationName, i, batch + 1, getWidth()));
             }
         }
+        init();
+        repaint();
+    }
+
+    public RoomPanel(Panel panel, Room room, String operationName) {
+        super(panel);
+
+        this.operationName = operationName;
+
+        refresh(room);
     }
 
     public String getOperationName() {

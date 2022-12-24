@@ -9,25 +9,21 @@ import java.util.List;
 
 public class ContinuePanel extends AbstractPanel {
 
-    private boolean answer = false;
-    private List<ReadyListener> listeners = new ArrayList<>();
+    private List<ReadyListener> exitListeners = new ArrayList<>();
+    private List<ReadyListener> continueListeners = new ArrayList<>();
 
-    public void addListener(ReadyListener toAdd) {
-        listeners.add(toAdd);
+    public void addContinueListener(ReadyListener toAdd) {
+        continueListeners.add(toAdd);
     }
 
-    public boolean isAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(boolean answer) {
-        this.answer = answer;
+    public void addExitListener(ReadyListener toAdd) {
+        exitListeners.add(toAdd);
     }
 
     public ContinuePanel(String name){
         super(new Dimension());
         JDialog jDialog = new JDialog();
-        jDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        jDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         jDialog.setResizable(false);
         jDialog.add(this);
         jDialog.setMinimumSize(new Dimension(600, 300));
@@ -48,14 +44,12 @@ public class ContinuePanel extends AbstractPanel {
         jDialog.pack();
 
         aContinue.addActionListener(a -> {
-            listeners.forEach(ReadyListener::ready);
-            answer = true;
             jDialog.dispose();
+            continueListeners.forEach(ReadyListener::ready);
         });
         aExit.addActionListener(a -> {
-            listeners.forEach(ReadyListener::ready);
-            answer = false;
             jDialog.dispose();
+            exitListeners.forEach(ReadyListener::ready);
         });
     }
 }

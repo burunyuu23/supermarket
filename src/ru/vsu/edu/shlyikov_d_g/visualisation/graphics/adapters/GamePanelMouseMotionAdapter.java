@@ -22,8 +22,9 @@ public class GamePanelMouseMotionAdapter implements MouseMotionListener {
             int x = e.getX();
             int y = e.getY();
             gamePanel.getChecker().setPoint(new Point(x, y));
+
             if (x < 1062 && x > 544 && y < 380 && y > 370) checker = true;
-            else if (x < 1062 && x > 544 && y > 670 && y < 680 && checker) gamePanel.setCompleted(true);
+            else if (x < 1062 && x > 544 && y > 670 && y < 700 && checker) gamePanel.getBarcodeManualPanel().getListeners().forEach(ReadyListener::ready);
             else if (x < 1062 && x > 544 && y > 360 && y < 690){
             }
             else checker = false;

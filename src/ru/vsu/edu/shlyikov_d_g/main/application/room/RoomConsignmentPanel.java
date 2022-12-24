@@ -28,7 +28,7 @@ public class RoomConsignmentPanel extends AbstractPanel {
 
         JButton doSmth = new JButton();
         doSmth.setSize(50,50);
-        doSmth.addActionListener(a -> new Thread(() -> new ConsignmentPanel(consignment, panel, operationName, field1, field2)).start());
+        doSmth.addActionListener(a -> new ConsignmentPanel(consignment, panel, operationName, field1, field2));
         setNormal(doSmth);
         add(doSmth);
 

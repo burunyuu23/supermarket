@@ -14,11 +14,11 @@ public class ConsignmentPanel extends AbstractPanel {
     public ConsignmentPanel(Consignment consignment, Panel panel, String operationName, int field1, int field2){
         super(panel);
 
-        JDialog jDialog = new JDialog();
-        jDialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        jDialog.setResizable(false);
-        jDialog.add(this);
-        jDialog.setMinimumSize(new Dimension(600, 900));
+        JFrame jFrame = new JFrame();
+        jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        jFrame.setResizable(false);
+        jFrame.add(this);
+        jFrame.setMinimumSize(new Dimension(600, 900));
 
         setMinimumSize(new Dimension(600, 900));
 
@@ -60,20 +60,14 @@ public class ConsignmentPanel extends AbstractPanel {
             }
             sb.append(amountSlider.getValue()/multiply);
             panel.getList().add(sb.toString());
-            jDialog.dispose();
+            jFrame.dispose();
         });
         setNormal(buyButton);
         add(buyButton);
 
-        jDialog.setVisible(true);
-        jDialog.pack();
+        jFrame.setVisible(true);
+        jFrame.pack();
 
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        jDialog.dispose();
+        new Timer(7500, e -> jFrame.dispose()).start();
     }
 }
