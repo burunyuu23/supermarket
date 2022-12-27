@@ -3,7 +3,7 @@ package ru.vsu.edu.shlyikov_d_g.main.application.room;
 import ru.vsu.edu.shlyikov_d_g.main.application.helper.AbstractPanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.helper.ConsignmentPanel;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.Panel;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.Panel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,6 +38,8 @@ public class RoomConsignmentPanel extends AbstractPanel {
         }
         else if (operationName.toLowerCase(Locale.ROOT).equals("переместить")){
             buttonIcon = new ImageIcon("C:\\Users\\zEzzLike\\IdeaProjects\\oop_atta1\\src\\ru\\vsu\\edu\\shlyikov_d_g\\resources\\translateButton.png");
+        }        else if (operationName.toLowerCase(Locale.ROOT).equals("купить")){
+            buttonIcon = new ImageIcon("C:\\Users\\zEzzLike\\IdeaProjects\\oop_atta1\\src\\ru\\vsu\\edu\\shlyikov_d_g\\resources\\buyButton.png");
         }
         else{
             doSmth.setVisible(false);

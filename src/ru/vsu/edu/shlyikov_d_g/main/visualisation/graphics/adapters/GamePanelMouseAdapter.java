@@ -1,7 +1,7 @@
-package ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters;
+package ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.adapters;
 
 import ru.vsu.edu.shlyikov_d_g.main.application.game.GamePanel;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.Panel;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.Panel;
 
 import java.awt.event.MouseEvent;
 

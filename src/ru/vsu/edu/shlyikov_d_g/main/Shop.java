@@ -6,15 +6,16 @@ import ru.vsu.edu.shlyikov_d_g.events.Supply;
 import ru.vsu.edu.shlyikov_d_g.events.Transfer;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 import ru.vsu.edu.shlyikov_d_g.rooms.Store;
-import ru.vsu.edu.shlyikov_d_g.visualisation.Console;
-import ru.vsu.edu.shlyikov_d_g.visualisation.GameVisualise;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.Panel;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.Console;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.GameVisualise;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.Panel;
 
 import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Scanner;
 
 public class Shop {
+    private String name = "unnamed";
 
     private GameVisualise gameVisualise;
 
@@ -29,6 +30,18 @@ public class Shop {
     private MoneyScore dayMoney;
     private MoneyScore supplyMoney;
     private int purchaseCount;
+
+    public int getPurchaseCount() {
+        return purchaseCount;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Supply getSupply() {
         return supply;
@@ -52,6 +65,10 @@ public class Shop {
         return dayPassed;
     }
 
+    public void setVisualise(GameVisualise gameVisualise){
+        this.gameVisualise = gameVisualise;
+    };
+
     public Shop(){
         money = new MoneyScore(500000);
         dayPassed = 1;
@@ -61,6 +78,10 @@ public class Shop {
 
     public boolean isOverPurchaseCount() {
         return purchaseCount < 5;
+    }
+
+    public boolean isOverPurchaseCount(int k) {
+        return purchaseCount < 5+k;
     }
 
     public void setSupplyMoney(MoneyScore supplyMoney) {
@@ -131,9 +152,11 @@ public class Shop {
         transfer.askStorage();
     }
 
-    public void purchase(){
+    public Purchase purchase(){
         purchase = new Purchase(store, gameVisualise);
         purchaseCount++;
+        getStore().removeElements(purchase.getCustomer().getBasket());
+        return purchase;
     }
 
     public void dayMoneyPurchase(){

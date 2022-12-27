@@ -7,7 +7,7 @@ import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
 import ru.vsu.edu.shlyikov_d_g.products.units.SupplyUnit;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
-import ru.vsu.edu.shlyikov_d_g.visualisation.GameVisualise;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.GameVisualise;
 
 import java.math.BigDecimal;
 import java.util.*;

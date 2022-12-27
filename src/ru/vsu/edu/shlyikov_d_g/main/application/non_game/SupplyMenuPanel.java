@@ -2,7 +2,7 @@ package ru.vsu.edu.shlyikov_d_g.main.application.non_game;
 
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Supplier;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.adapters.ReadyListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

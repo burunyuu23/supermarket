@@ -28,6 +28,13 @@ public class Customer extends Buyer {
         money = new MoneyScore();
     }
 
+    public Customer(String name, int years){
+        setGender();
+        setName(name);
+        setYears(years);
+        money = new MoneyScore();
+    }
+
     public void chooseProducts(Room store) {
         Random randomAmount = new Random();
         Random randomChance = new Random();

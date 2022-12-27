@@ -4,7 +4,7 @@ import ru.vsu.edu.shlyikov_d_g.main.application.game.GamePanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.non_game.MainMenuPanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.non_game.SupplyMenuPanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.room.RoomPanel;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.adapters.ReadyListener;
 
 import javax.swing.*;
 import java.awt.*;

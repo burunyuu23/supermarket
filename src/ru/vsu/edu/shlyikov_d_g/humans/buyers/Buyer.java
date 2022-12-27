@@ -14,4 +14,8 @@ public abstract class Buyer extends Human {
     public List<Consignment> getBasket() {
         return basket;
     }
+
+    public void setBasket(List<Consignment> basket) {
+        this.basket = basket;
+    }
 }

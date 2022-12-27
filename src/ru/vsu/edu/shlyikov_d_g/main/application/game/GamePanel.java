@@ -4,7 +4,7 @@ import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
 import ru.vsu.edu.shlyikov_d_g.main.application.helper.AbstractPanel;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
 import ru.vsu.edu.shlyikov_d_g.rooms.Store;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.adapters.ReadyListener;
 
 import javax.swing.*;
 import java.awt.*;

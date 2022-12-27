@@ -1,6 +1,6 @@
 package ru.vsu.edu.shlyikov_d_g.main.application.helper;
 
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.adapters.ReadyListener;
 
 import javax.swing.*;
 import java.awt.*;

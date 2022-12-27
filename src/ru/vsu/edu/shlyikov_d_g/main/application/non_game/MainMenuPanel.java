@@ -1,6 +1,6 @@
 package ru.vsu.edu.shlyikov_d_g.main.application.non_game;
 
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.PopUpDisplay;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.PopUpDisplay;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

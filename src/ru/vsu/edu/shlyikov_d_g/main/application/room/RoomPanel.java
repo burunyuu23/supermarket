@@ -5,8 +5,8 @@ import ru.vsu.edu.shlyikov_d_g.products.Consignment;
 import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.Panel;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.Panel;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.adapters.ReadyListener;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -105,8 +105,11 @@ public class RoomPanel extends AbstractPanel {
             String toRoom = getRoomString(room1);
             jTextPane.setText("from: " + fromRoom + "\n" + "to: " + toRoom);
         }
+        else if (Objects.equals(operationName.toLowerCase(Locale.ROOT),"Купить")) {
+            jTextPane.setText("Вы находитесь в помещении " + room.getRoomName());
+        }
         else{
-            jTextPane.setText(fromRoom);
+                jTextPane.setText(fromRoom);
         }
         continueButton.setText(operationName);
 

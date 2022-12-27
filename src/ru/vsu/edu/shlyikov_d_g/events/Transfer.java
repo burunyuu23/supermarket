@@ -5,7 +5,7 @@ import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
 import ru.vsu.edu.shlyikov_d_g.products.units.TransferUnit;
 import ru.vsu.edu.shlyikov_d_g.rooms.*;
-import ru.vsu.edu.shlyikov_d_g.visualisation.GameVisualise;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.GameVisualise;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

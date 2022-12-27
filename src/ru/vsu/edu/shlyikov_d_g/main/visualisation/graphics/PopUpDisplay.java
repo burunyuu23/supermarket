@@ -1,4 +1,4 @@
-package ru.vsu.edu.shlyikov_d_g.visualisation.graphics;
+package ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics;
 
 import ru.vsu.edu.shlyikov_d_g.main.application.helper.ChequePanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.helper.InfoPanel;

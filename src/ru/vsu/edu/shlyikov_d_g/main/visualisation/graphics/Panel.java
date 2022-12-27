@@ -1,4 +1,4 @@
-package ru.vsu.edu.shlyikov_d_g.visualisation.graphics;
+package ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics;
 
 import ru.vsu.edu.shlyikov_d_g.events.Supply;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
@@ -20,8 +20,8 @@ import ru.vsu.edu.shlyikov_d_g.products.units.Unit;
 import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
-import ru.vsu.edu.shlyikov_d_g.visualisation.GameVisualise;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.*;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.GameVisualise;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.adapters.*;
 
 import javax.swing.*;
 import java.math.BigDecimal;
@@ -45,7 +45,7 @@ public class Panel extends JPanel implements GameVisualise {
         return shop;
     }
 
-    public Panel(Shop shop){
+    public Panel(Shop shop) {
         this.shop = shop;
 
         supplyMenuPanel = new SupplyMenuPanel(shop.getDayPassed());
@@ -83,7 +83,7 @@ public class Panel extends JPanel implements GameVisualise {
         return list;
     }
 
-    private void winMain(){
+    private void winMain() {
         Locale.setDefault(Locale.ROOT);
 
         java.awt.EventQueue.invokeLater(() -> {
@@ -93,7 +93,7 @@ public class Panel extends JPanel implements GameVisualise {
     }
 
     @Override
-    public void start(){
+    public void start() {
         String help = ("Добро пожаловать в игру “Супермаркет”!\n" +
                 "В начале игры вы имеете 500 тысяч рублей. На них вы должны будете открыть магазин, который будет приносить вам доход. " +
                 "Закупайте товары, следите за их сроком годности, устанавливайте наценку, при которой прибыль будет наибольшей.\n" +
@@ -126,7 +126,7 @@ public class Panel extends JPanel implements GameVisualise {
     }
 
     @Override
-    public void inputSupplyConsignments(){
+    public void inputSupplyConsignments() {
 
     }
 
@@ -152,62 +152,65 @@ public class Panel extends JPanel implements GameVisualise {
         frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
 
         roomPanel.addListener(() -> {
-                ContinuePanel continuePanel = new ContinuePanel("Удалить ");
+            ContinuePanel continuePanel = new ContinuePanel("Удалить ");
 
-                continuePanel.addExitListener(() -> {
-                    if (!supply.isNormalize()) {
-                        supply.remove(list);
-                        list.clear();
+            continuePanel.addExitListener(() -> {
+                if (!supply.isNormalize()) {
+                    supply.remove(list);
+                    list.clear();
 
-                        shop.getStorage().addElements(supply.getElements());
-                        shop.setSupplyMoney(new MoneyScore(supply.supplyMoney()));
+                    shop.getStorage().addElements(supply.getElements());
+                    shop.setSupplyMoney(new MoneyScore(supply.supplyMoney()));
 
-                        transfer();
-                    }
-                        });
-                        continuePanel.addContinueListener(() -> {
-                            supply.remove(list);
-                            list.clear();
-                            roomPanel.refresh(supply.getElements());
-                        });
-                });
-            }
+                    transfer();
+                }
+            });
+            continuePanel.addContinueListener(() -> {
+                supply.remove(list);
+                list.clear();
+                roomPanel.refresh(supply.getElements());
+            });
+        });
+    }
 
-            private void transfer() {
-                roomPanel = new RoomPanel(this, shop.getStorage(), "Переместить");
+    private void transfer() {
+        roomPanel = new RoomPanel(this, shop.getStorage(), "Переместить");
 
-                frame.setRoomPanel(roomPanel);
-                frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
+        frame.setRoomPanel(roomPanel);
+        frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
 
-                roomPanel.addListener(() -> {
-                        ContinuePanel continueTransferPanel = new ContinuePanel("Переместить");
+        transferUpdate(roomPanel);
+    }
 
-                        continueTransferPanel.addExitListener(() -> {
-                            if (!supply.isNormalize()) {
-                                shop.getTransfer().transfer(shop.getStorage(), shop.getStore(), shop.getTransfer().consignmentInput(list));
-                                list.clear();
+    protected void transferUpdate(RoomPanel roomPanel){
+        roomPanel.addListener(() -> {
+            ContinuePanel continueTransferPanel = new ContinuePanel("Переместить");
 
-                                showStore();
-                            }
-                        });
+            continueTransferPanel.addExitListener(() -> {
+                if (!supply.isNormalize()) {
+                    shop.getTransfer().transfer(shop.getStorage(), shop.getStore(), shop.getTransfer().consignmentInput(list));
+                    list.clear();
 
-                        continueTransferPanel.addContinueListener(() -> {
-                            shop.getTransfer().transfer(shop.getStorage(), shop.getStore(), shop.getTransfer().consignmentInput(list));
-                            list.clear();
+                    showStore();
+                }
+            });
+            continueTransferPanel.addContinueListener(() -> {
+                shop.getTransfer().transfer(shop.getStorage(), shop.getStore(), shop.getTransfer().consignmentInput(list));
+                list.clear();
 
-                            roomPanel.refresh(shop.getStorage());
-                        });
-                });
-            }
+                roomPanel.refresh(shop.getStorage());
+            });
+        });
+    }
 
-            private void showStore(){
-                roomPanel = new RoomPanel(this, shop.getStore(), "Продолжить");
-                frame.setRoomPanel(roomPanel);
-                frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
-                roomPanel.addListener(this::showStorage);
-            }
+    private void showStore() {
+        roomPanel = new RoomPanel(this, shop.getStore(), "Продолжить");
+        frame.setRoomPanel(roomPanel);
+        frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
+        roomPanel.addListener(this::showStorage);
+    }
 
-    private void showStorage(){
+    private void showStorage() {
         roomPanel = new RoomPanel(this, shop.getStorage(), "Продолжить");
         frame.setRoomPanel(roomPanel);
         frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
@@ -239,7 +242,7 @@ public class Panel extends JPanel implements GameVisualise {
     }
 
     @Override
-    public void showRoom(Room room){
+    public void showRoom(Room room) {
         roomPanel = new RoomPanel(this, room, "Продолжить");
         roomPanel.addListener(this::purchases);
 
@@ -247,34 +250,34 @@ public class Panel extends JPanel implements GameVisualise {
         frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
     }
 
-    private void purchases(){
+    protected void purchases() {
         if (shop.isOverPurchaseCount()) {
             shop.purchase();
-            shop.getStore().removeElements(shop.getPurchase().getCustomer().getBasket());
-            shop.getPurchase().newCustomer();
+
             if (shop.getPurchase().getCustomer().getBasket().size() > 0) {
                 consignmentIndex = 0;
                 continuePurchase(consignmentIndex);
-            }
-            else{
+            } else {
                 purchases();
             }
-        }
-        else{
-            frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.SUPPLY_MENU_PANEL);
-            getFrom("закупить", new SupplyUnit(""));
-            shop.nextDay();
-            shop.startDay();
-            supply.reset();
-            showSuppliers(supply.getSupplierList());
+        } else {
+            goToSupply();
         }
     }
 
-    public void continuePurchase(int i){
+    protected void goToSupply(){
+        frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.SUPPLY_MENU_PANEL);
+        getFrom("закупить", new SupplyUnit(""));
+        shop.nextDay();
+        shop.startDay();
+        supply.reset();
+        showSuppliers(supply.getSupplierList());
+    }
+
+    public void continuePurchase(int i) {
         if (shop.getPurchase().getCustomer().getBasket().size() > consignmentIndex) {
             purchase(shop.getPurchase().getCustomer(), shop.getPurchase().getCustomer().getBasket().get(i), shop.getStore());
-        }
-        else{
+        } else {
             shop.getPurchase().createCheque();
             shop.dayMoneyReceive(shop.getPurchase().getCheque().getGeneralAmount());
             showCheque(shop.getPurchase().getCheque(), shop.getPurchase().getCheque().getGeneralAmount());
@@ -292,11 +295,11 @@ public class Panel extends JPanel implements GameVisualise {
 
     @Override
     public void showCheque(Cheque cheque, BigDecimal price) {
-        PopUpDisplay.showCheque(cheque.toString() + "\n" + "Итого: " + Utils.round(price,2));
+        PopUpDisplay.showCheque(cheque.toString() + "\n" + "Итого: " + Utils.round(price, 2));
     }
 
     @Override
-    public BigDecimal purchase(Customer customer, Consignment consignment, Store store)  {
+    public BigDecimal purchase(Customer customer, Consignment consignment, Store store) {
         gamePanel = new GamePanel(customer, consignment, store);
         gamePanel.addMouseListener(new GamePanelMouseAdapter(this, gamePanel));
         gamePanel.addMouseMotionListener(new GamePanelMouseMotionAdapter(this, gamePanel));
@@ -321,32 +324,21 @@ public class Panel extends JPanel implements GameVisualise {
         gamePanel.addCashDeskListener(() -> {
             if (consignment.checkKG()) {
                 gamePanel.setCurrentGamePanel(GamePanel.CurrentGamePanel.SCALES_PANEL);
-            }
-            else {
+            } else {
                 gamePanel.setCurrentGamePanel(GamePanel.CurrentGamePanel.BARCODE_MANUAL_PANEL);
             }
-
-//                while (!gamePanel.isCompleted()) {
-//                    if (gamePanel.getCurrentGamePanel() == GamePanel.CurrentGamePanel.BARCODE_AUTO_PANEL) break;
-//                    System.out.println(gamePanel.isCompleted());
-//                }
-//                if (gamePanel.getCurrentGamePanel() == GamePanel.CurrentGamePanel.BARCODE_AUTO_PANEL) {
-//                    gamePanel.setScalesRight(false);
-//                    while (!gamePanel.isSubmitted())
-//                        System.out.println(gamePanel.isSubmitted());
-//                }
         });
         return consignment.getUnitPrice().multiply(consignment.getAmount());
     }
 
-    private void circleBase(String operationName){
+    private void circleBase(String operationName) {
         PopUpDisplay.showHelp(String.format("""
                 Нажмите на товары, которые хотите %s,
                 после этого выберите их количество и нажмите кнопку действия.
                 """, operationName));
     }
 
-    private List<String> circle(String operationName){
+    private List<String> circle(String operationName) {
 
         circleBase(operationName);
 
@@ -359,16 +351,16 @@ public class Panel extends JPanel implements GameVisualise {
     private List<String> circle(String operationName, Room room) {
         circleBase(operationName);
 
-            roomPanel = new RoomPanel(this, room, operationName);
-            roomPanel.addListener(readyEvent);
+        roomPanel = new RoomPanel(this, room, operationName);
+        roomPanel.addListener(readyEvent);
 
-            frame.setRoomPanel(roomPanel);
-            frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
+        frame.setRoomPanel(roomPanel);
+        frame.setCurrentNotGamePanel(ShopFrame.CurrentNotGamePanel.ROOM_PANEL);
 
         return list;
     }
 
-    private void getFromBase(){
+    private void getFromBase() {
         list.clear();
     }
 
@@ -385,7 +377,7 @@ public class Panel extends JPanel implements GameVisualise {
     }
 
     @Override
-    public void startOfTheDay(int dayPassed){
+    public void startOfTheDay(int dayPassed) {
     }
 
     @Override

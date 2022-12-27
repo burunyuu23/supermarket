@@ -3,17 +3,15 @@ package ru.vsu.edu.shlyikov_d_g.events;
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
 import ru.vsu.edu.shlyikov_d_g.products.Cheque;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
-import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Store;
-import ru.vsu.edu.shlyikov_d_g.visualisation.Console;
-import ru.vsu.edu.shlyikov_d_g.visualisation.GameVisualise;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.Console;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.GameVisualise;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Purchase {
-    private final Store store;
+    private Store store;
     private Customer customer;
     private Cheque cheque;
     private GameVisualise gameVisualise;
@@ -22,7 +20,19 @@ public class Purchase {
     public Purchase(Store store, GameVisualise gameVisualise) {
         this.store = store;
         this.gameVisualise = gameVisualise;
+        newCustomer();
     }
+
+    public Purchase(List<Consignment> basket) {
+        setCustomer(new Customer());
+        customer.setBasket(basket);
+    }
+
+    public Purchase(Customer customer, List<Consignment> basket) {
+        setCustomer(customer);
+        customer.setBasket(basket);
+    }
+
 
     public Cheque getCheque() {
         return cheque;
@@ -45,16 +55,22 @@ public class Purchase {
         customer.chooseProducts(store);
     }
 
-    public BigDecimal purchase(){
+    public BigDecimal purchase(List<Consignment> basket){
         newCustomer();
 
-        for (Consignment c : customer.getBasket()) {
+        for (Consignment c : basket) {
             price = countPrice(gameVisualise.purchase(customer, c, store));
         }
 
         createCheque();
         showCheque();
         removeFromStore();
+
+        return cheque.getGeneralAmount();
+    }
+
+    public BigDecimal purchase(){
+        purchase(customer.getBasket());
 
         return cheque.getGeneralAmount();
     }
@@ -74,5 +90,16 @@ public class Purchase {
     public BigDecimal countPrice(BigDecimal count){
         BigDecimal price = new BigDecimal(0);
         return price.add(count);
+    }
+
+    @Override
+    public String toString() {
+        return "Purchase{" +
+                "store=" + store +
+                ", customer=" + customer +
+                ", cheque=" + cheque +
+                ", gameVisualise=" + gameVisualise +
+                ", price=" + price +
+                '}';
     }
 }

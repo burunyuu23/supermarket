@@ -1,4 +1,4 @@
-package ru.vsu.edu.shlyikov_d_g.visualisation;
+package ru.vsu.edu.shlyikov_d_g.main.visualisation;
 
 import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
 import ru.vsu.edu.shlyikov_d_g.products.Cheque;
@@ -14,7 +14,7 @@ import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface GameVisualise {
+public interface GameVisualise extends Game {
 
     void start();
 

@@ -2,7 +2,6 @@ package ru.vsu.edu.shlyikov_d_g.main.application.game;
 
 import ru.vsu.edu.shlyikov_d_g.main.application.helper.AbstractDrawer;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.adapters.ReadyListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,8 +9,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BarcodeManualPanel extends AbstractDrawer {
     BufferedImage back = null;

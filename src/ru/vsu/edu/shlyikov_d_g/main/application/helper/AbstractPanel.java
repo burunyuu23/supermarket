@@ -1,13 +1,10 @@
 package ru.vsu.edu.shlyikov_d_g.main.application.helper;
 
-import ru.vsu.edu.shlyikov_d_g.products.Consignment;
-import ru.vsu.edu.shlyikov_d_g.visualisation.graphics.Panel;
+import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.Panel;
 
 import javax.swing.*;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public abstract class AbstractPanel extends JPanel
 {
