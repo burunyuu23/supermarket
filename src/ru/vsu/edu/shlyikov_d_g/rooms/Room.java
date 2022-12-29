@@ -1,5 +1,6 @@
 package ru.vsu.edu.shlyikov_d_g.rooms;
 
+import ru.vsu.edu.shlyikov_d_g.main.network.Response;
 import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
@@ -68,6 +69,26 @@ public abstract class Room {
 
     public Map<String, Map<Integer, Consignment>> getElements() {
         return elements;
+    }
+
+    public String toResponse(){
+        StringBuilder sb = new StringBuilder();
+        for (String vendorCode:this.getElements().keySet()) {
+            for (Integer batch : this.getElements().get(vendorCode).keySet()) {
+                if (!sb.isEmpty()) sb.append(",");
+                Consignment c = this.getElements().get(vendorCode).get(batch);
+//                this.vendorCode = fields[0];
+//                this.amount = new BigDecimal(fields[1]);
+//                this.expirationDays = Integer.parseInt(fields[2]);
+//                this.batchNumber = Integer.parseInt(fields[3]);
+
+                sb.append(Response.createResponse(vendorCode, Response.CONSIGNMENT_SEPARATOR.toString(),
+                        c.getAmount().toString(), Response.CONSIGNMENT_SEPARATOR.toString(),
+                        String.valueOf(c.getExpirationDays()), Response.CONSIGNMENT_SEPARATOR.toString(),
+                        String.valueOf(batch)));
+            }
+        }
+        return sb.toString();
     }
 
     public void refresh(){

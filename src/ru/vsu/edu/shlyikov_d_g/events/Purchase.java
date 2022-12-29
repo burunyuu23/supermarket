@@ -33,6 +33,11 @@ public class Purchase {
         customer.setBasket(basket);
     }
 
+    public Purchase(Store store, Customer customer) {
+        this.store = store;
+        this.customer = customer;
+    }
+
 
     public Cheque getCheque() {
         return cheque;

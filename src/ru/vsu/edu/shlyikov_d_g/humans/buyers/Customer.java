@@ -2,6 +2,7 @@ package ru.vsu.edu.shlyikov_d_g.humans.buyers;
 
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
+import ru.vsu.edu.shlyikov_d_g.products.units.TransferUnit;
 import ru.vsu.edu.shlyikov_d_g.rooms.Room;
 import ru.vsu.edu.shlyikov_d_g.rooms.Store;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
@@ -9,10 +10,7 @@ import ru.vsu.edu.shlyikov_d_g.utils.Utils;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Customer extends Buyer {
     private MoneyScore money;
@@ -33,6 +31,43 @@ public class Customer extends Buyer {
         setName(name);
         setYears(years);
         money = new MoneyScore();
+    }
+
+    public Customer(String name, int years, List<String> inputList, Store store){
+        setGender();
+        setName(name);
+        setYears(years);
+        money = new MoneyScore();
+
+        System.out.println(inputList);
+        input(inputList, store);
+    }
+
+    private void input(List<String> inputList, Store store){
+        if (inputList.size() == 0) return;
+        List<TransferUnit> tuList = TransferUnit.toTransferUnitList(inputList);
+
+        tuList.sort(Comparator.comparing(TransferUnit::getNumBatch).reversed());
+        tuList.sort(Comparator.comparing(TransferUnit::getNumConsignment).reversed());
+
+        for (TransferUnit tu : tuList) {
+            int numСonsignment = tu.getNumConsignment() - 1;
+            int numBatch = tu.getNumBatch() - 1;
+
+            Consignment consignmentFromInput = store.getElements().get(store.getElements().keySet().stream().toList().get(numСonsignment)).get(numBatch).clone();
+
+            BigDecimal amount;
+            if (consignmentFromInput.checkKG()){
+                amount = tu.getAmount();
+            }
+            else {
+                amount = Utils.round(tu.getAmount(),0);
+            }
+
+            consignmentFromInput.setAmount(consignmentFromInput.minusAmount(amount));
+
+            basket.add(consignmentFromInput);
+        }
     }
 
     public void chooseProducts(Room store) {

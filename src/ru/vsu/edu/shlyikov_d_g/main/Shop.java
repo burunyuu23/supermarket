@@ -4,6 +4,7 @@ import ru.vsu.edu.shlyikov_d_g.events.Purchase;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
 import ru.vsu.edu.shlyikov_d_g.events.Supply;
 import ru.vsu.edu.shlyikov_d_g.events.Transfer;
+import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
 import ru.vsu.edu.shlyikov_d_g.rooms.Storage;
 import ru.vsu.edu.shlyikov_d_g.rooms.Store;
 import ru.vsu.edu.shlyikov_d_g.main.visualisation.Console;
@@ -148,6 +149,10 @@ public class Shop {
         storage.addElements(supply.getElements());
     }
 
+    public void supply(int productCount){
+        supply = new Supply(store, productCount);
+    }
+
     public void transfer(){
         transfer.askStorage();
     }
@@ -156,6 +161,13 @@ public class Shop {
         purchase = new Purchase(store, gameVisualise);
         purchaseCount++;
         getStore().removeElements(purchase.getCustomer().getBasket());
+        return purchase;
+    }
+
+    public Purchase purchase(Customer customer){
+        purchase = new Purchase(store, customer);
+        purchaseCount++;
+        getStore().removeElements(customer.getBasket());
         return purchase;
     }
 

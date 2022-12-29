@@ -14,6 +14,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import java.awt.*;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -21,7 +22,7 @@ import java.util.Objects;
 
 public class RoomPanel extends AbstractPanel {
     private final JTextPane jTextPane = new JTextPane();
-    private final JScrollPane jScrollPane = new JScrollPane();
+    private JScrollPane jScrollPane = new JScrollPane();
     private Container cont = new Container();
     private final JButton continueButton = new JButton();
     private String operationName = null;
@@ -121,6 +122,35 @@ public class RoomPanel extends AbstractPanel {
             }
         }
         init();
+        repaint();
+    }
+
+    public RoomPanel(String operationName) {
+        super(new Dimension());
+        this.operationName = operationName;
+
+        jTextPane.setText("Торговый зал");
+        continueButton.setText(operationName);
+
+        init();
+        repaint();
+    }
+
+    public void updateShop(List<Consignment> list, List<String> consignmentList){
+        int i = 0;
+        String vendorCode = "";
+
+        cont.removeAll();
+
+        for (Consignment c:list) {
+            if (!c.getVendorCode().equals(vendorCode)){
+                i++;
+                vendorCode = c.getVendorCode();
+            }
+            cont.add(new RoomConsignmentPanel(c, "купить", i, c.getBatchNumber() + 1, getWidth(), consignmentList));
+        }
+
+        revalidate();
         repaint();
     }
 

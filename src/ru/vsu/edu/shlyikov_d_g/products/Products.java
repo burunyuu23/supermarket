@@ -109,7 +109,9 @@ public class Products {
                     String       randomKey = keys.get(random.nextInt(keys.size()));
                 if (!s.contains(product_range.get(randomKey))) {
                     Consignment value = product_range.get(randomKey);
+                    value.setAmount(BigDecimal.valueOf(random.nextInt(100)+50));
                     s.add(value);
+//                    System.out.println(value);
                 }
                 else{
                     i--;

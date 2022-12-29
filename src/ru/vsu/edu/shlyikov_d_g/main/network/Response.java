@@ -4,7 +4,21 @@ public enum Response {
     SEPARATOR ("="),
     PLAYER_COUNT("PLAYER_COUNT"),
     GO ("GO"),
-    CHAT ("CHAT");
+    CHAT ("CHAT"),
+    BUY("BUY"),
+    BYE ("BYE"),
+    SUPPLY("SUPPLY"),
+    PURCHASE ("PURCHASE"),
+    CHANGE ("CHANGE"),
+    CONSIGNMENT_SEPARATOR(":");
+
+    public static String createResponse(String ... a){
+        StringBuilder sb = new StringBuilder();
+        for (String str : a) {
+            sb.append(str);
+        }
+        return sb.toString();
+    }
 
     private String sign;
 

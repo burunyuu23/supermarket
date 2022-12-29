@@ -1,9 +1,11 @@
 package ru.vsu.edu.shlyikov_d_g.products;
 
+import ru.vsu.edu.shlyikov_d_g.main.network.Response;
 import ru.vsu.edu.shlyikov_d_g.utils.Icon;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
 
 import java.math.BigDecimal;
+import java.util.ResourceBundle;
 
 public class Consignment {
     private String vendorCode;
@@ -22,8 +24,19 @@ public class Consignment {
     private boolean shouldBeInTheFridge;
 
     // perfect object creation
-    public Consignment(String vendorCode) {
-        this.vendorCode = vendorCode;
+    public Consignment(String response) {
+        String[] fields = response.split(Response.CONSIGNMENT_SEPARATOR.toString());
+        Products products = new Products();
+
+        this.vendorCode = fields[0];
+        this.amount = new BigDecimal(fields[1]);
+        this.expirationDays = Integer.parseInt(fields[2]);
+        this.batchNumber = Integer.parseInt(fields[3]);
+
+        this.productName = products.getProduct(this.vendorCode).getProductName();
+        this.measure = products.getProduct(this.vendorCode).getMeasure();
+        this.shouldBeInTheFridge = products.getProduct(this.vendorCode).getShouldBeInTheFridge();
+        this.unitPrice = products.getProduct(this.vendorCode).getUnitPrice();
     }
 
     // test object creation (w/o database) or nested creation from database

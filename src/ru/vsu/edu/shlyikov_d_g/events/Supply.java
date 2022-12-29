@@ -1,5 +1,7 @@
 package ru.vsu.edu.shlyikov_d_g.events;
 
+import ru.vsu.edu.shlyikov_d_g.products.Products;
+import ru.vsu.edu.shlyikov_d_g.rooms.Store;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
 import ru.vsu.edu.shlyikov_d_g.utils.Amounts;
 import ru.vsu.edu.shlyikov_d_g.attributes.MoneyScore;
@@ -18,8 +20,10 @@ public class Supply {
     private BigDecimal cost;
     private Amounts amounts;
     private Storage storage;
+    private Store store;
     private MoneyScore moneyScore;
     private int supplierQuantity;
+    private Products products = new Products();
 
     private GameVisualise visualiser;
 
@@ -28,6 +32,11 @@ public class Supply {
         this.moneyScore = moneyScore;
         this.storage = storage;
         this.supplierQuantity = supplierQuantity;
+    }
+
+    public Supply(Store store, int productCount){
+        this.store = store;
+        supply(productCount);
     }
 
     public void reset(){
@@ -54,6 +63,10 @@ public class Supply {
         process();
 
         return Utils.round(cost, 2);
+    }
+
+    public void supply(int productCount){
+        store.addElements(products.getLimitedRandomProducts(productCount));
     }
 
      public BigDecimal supplyMoney(){

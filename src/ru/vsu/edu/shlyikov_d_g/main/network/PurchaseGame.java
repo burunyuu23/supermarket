@@ -1,10 +1,5 @@
 package ru.vsu.edu.shlyikov_d_g.main.network;
 
-import ru.vsu.edu.shlyikov_d_g.events.Purchase;
-import ru.vsu.edu.shlyikov_d_g.humans.buyers.Customer;
-import ru.vsu.edu.shlyikov_d_g.main.Shop;
-import ru.vsu.edu.shlyikov_d_g.main.application.helper.AbstractPanel;
-import ru.vsu.edu.shlyikov_d_g.main.application.room.RoomConsignmentPanel;
 import ru.vsu.edu.shlyikov_d_g.main.application.room.RoomPanel;
 import ru.vsu.edu.shlyikov_d_g.main.visualisation.Game;
 import java.awt.*;
@@ -14,63 +9,98 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Locale;
+import java.util.*;
+import java.util.List;
 
 import ru.vsu.edu.shlyikov_d_g.main.visualisation.graphics.Panel;
 import ru.vsu.edu.shlyikov_d_g.products.Consignment;
 import ru.vsu.edu.shlyikov_d_g.products.units.TransferUnit;
 import ru.vsu.edu.shlyikov_d_g.utils.Utils;
-import java.util.List;
 
 import javax.swing.*;
 
-public class PurchaseGame extends RoomPanel implements Game {
-    JFrame jFrame = new JFrame();
-    Socket socket;
+import static ru.vsu.edu.shlyikov_d_g.main.network.Response.*;
+
+public class PurchaseGame extends RoomPanel implements Game, Runnable {
+    private JFrame jFrame = new JFrame();
+    private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
+    private List<String> consignmentList = new ArrayList<>();
+    private int number;
 
-    public PurchaseGame(NetworkPanel panel, Socket socket) throws IOException {
-        super(panel, panel.getShop().getStore(),"Купить");
+    public PurchaseGame(Socket socket, int number) throws IOException {
+        super("Купить");
         this.socket = socket;
+        this.number = number;
+
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
-        jFrame.add(this);
+
+        jFrame.setTitle("Supermarket");
+        jFrame.setContentPane(this);
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jFrame.setSize(1600, 900);
+
+        jFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                if (JOptionPane.showConfirmDialog(jFrame,
+                        "Покинуть магазин?", "пока нам будет тебя не хватать пал палыч",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+//                    String response = Response.createResponse(BYE.toString(), SEPARATOR.toString(),String.valueOf(number));
+//                    out.println(response);
+
+                    try {
+                        in.close();
+                        out.close();
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    System.exit(0);
+                }
+            }
+        });
+
         addListener(() -> {
             // посылать серверу
-            panel.addPurchase(new Purchase(new Customer("пал палыч", 111), consignmentInput(panel.getList())));
-            panel.getList().clear();
+            if (consignmentList.size() > 0) {
+                String response = Response.createResponse(PURCHASE.toString(), SEPARATOR.toString(), consignmentList.toString());
+                System.out.println("Отослана команда: " + response);
+                out.println(response);
+                consignmentList.clear();
+            }
         });
         winMain();
+        start();
+    }
+
+    private void start() throws IOException {
+        String response;
+        while ((response = in.readLine()) != null) {
+            String[] parsed = response.split(Response.SEPARATOR.getSign());
+            System.out.println("Пришла команда: " + response);
+
+            Response command = Response.valueOf(parsed[0]);
+
+            switch (command) {
+                case SUPPLY -> {
+                    updateShop(consignmentInput(Arrays.stream(parsed[1].split(",")).toList()), consignmentList);
+                    repaint();
+                }
+                case CHANGE -> {
+                    number = Integer.parseInt(parsed[1]);
+                }
+            }
+        }
     }
 
     private List<Consignment> consignmentInput(List<String> input){
-        java.util.List<Consignment> list = new ArrayList<>();
-        java.util.List<TransferUnit> tuList = TransferUnit.toTransferUnitList(input);
-
-        tuList.sort(Comparator.comparing(TransferUnit::getNumBatch).reversed());
-        tuList.sort(Comparator.comparing(TransferUnit::getNumConsignment).reversed());
-
-        for (TransferUnit tu : tuList) {
-            int numСonsignment = tu.getNumConsignment() - 1;
-            int numBatch = tu.getNumBatch() - 1;
-
-            Consignment consignmentFromInput = panel.getShop().getStore().getElements().get(
-                    panel.getShop().getStore().getElements().keySet().stream().toList().get(numСonsignment)).get(numBatch).clone();
-
-            BigDecimal amount;
-            if (consignmentFromInput.checkKG()){
-                amount = tu.getAmount();
-            }
-            else {
-                amount = Utils.round(tu.getAmount(),0);
-            }
-
-            consignmentFromInput.setAmount(consignmentFromInput.minusAmount(amount));
-
-            list.add(consignmentFromInput);
+        List<Consignment> list = new ArrayList<>();
+        for (String s:input) {
+            list.add(new Consignment(s));
         }
 
         return list;
@@ -94,5 +124,10 @@ public class PurchaseGame extends RoomPanel implements Game {
             jFrame.setSize(1600, 900);
             jFrame.setVisible(true);
         });
+    }
+
+    @Override
+    public void run() {
+
     }
 }
